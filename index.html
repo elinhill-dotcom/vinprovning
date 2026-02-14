@@ -489,8 +489,8 @@
       const list = [...wines].sort((a,b) => (a.wine_number||0) - (b.wine_number||0));
       container.innerHTML = list.map(w => `
         <div class="flex justify-between items-center bg-white p-3 rounded-lg">
-          <span class="accent-deep font-semibold">Vin ${w.wine_number} (${w.price} kr)</span>
-          <button onclick="deleteDocById('wines','${w.id}')" class="text-red-600">✕</button>
+<span class="accent-deep font-semibold">Vin ${w.wine_number}</span>
+<button onclick="deleteDocById('wines','${w.id}')" class="text-red-600">✕</button>
         </div>
       `).join('');
     }
