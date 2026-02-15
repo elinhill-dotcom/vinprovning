@@ -3,90 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vinprovning &amp; Quiz</title>
-
+  <title>Vinprovning & Quiz</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
-
   <style>
     html, body { height: 100%; width: 100%; }
     .font-display { font-family: 'Playfair Display', Georgia, serif; }
     .font-body { font-family: 'Lato', system-ui, sans-serif; }
-
     .wine-gradient { background: linear-gradient(135deg, #8b1e3f 0%, #4a0f25 100%); }
     .card-light { background: #f4efe7; }
     .accent-deep { color: #8b1e3f; }
     .accent-light { color: #f4efe7; }
-
-    .btn-primary {
-      background: #8b1e3f;
-      color: #f4efe7;
-      min-height: 48px;
-      transition: all 0.2s;
-      -webkit-tap-highlight-color: transparent;
-    }
+    .btn-primary { background: #8b1e3f; color: #f4efe7; min-height: 48px; transition: all .2s; }
     .btn-primary:active { background: #6a1630; }
-
-    .nav-btn { min-height: 44px; font-size: 14px; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-
-    .option-btn {
-      border: 2px solid #ddd;
-      transition: all 0.2s;
-      min-height: 44px;
-      font-size: 16px;
-      font-weight: 500;
-      padding: 12px;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-      background: white;
-      color: #333;
-    }
+    .nav-btn { min-height: 44px; font-size: 14px; transition: all .2s; -webkit-tap-highlight-color: transparent; }
+    .option-btn { border: 2px solid #ddd; transition: all .2s; min-height: 44px; font-size: 16px; font-weight: 500; padding: 12px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; background: white; color: #333; }
     .option-btn.selected { background: #8b1e3f; color: #f4efe7; border-color: #8b1e3f; }
-
-    input, textarea, select {
-      font-size: 16px;
-      -webkit-appearance: none;
-      appearance: none;
-      border-radius: 8px;
-    }
+    input, textarea, select { font-size: 16px; -webkit-appearance: none; appearance: none; border-radius: 8px; }
     input[type="text"], input[type="number"], textarea, select { padding: 12px 14px; min-height: 44px; }
-
     .star-rating { display: flex; gap: 4px; font-size: 24px; }
-    .star-btn { background: none; border: none; cursor: pointer; padding: 0; font-size: 24px; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-
+    .star-btn { background: none; border: none; cursor: pointer; padding: 0; font-size: 24px; transition: all .2s; -webkit-tap-highlight-color: transparent; }
     .podium { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 16px; align-items: flex-end; margin-bottom: 24px; }
     .podium-position { background: white; border-radius: 8px; padding: 16px; text-align: center; }
-    .podium-1 { grid-column: 2; order: 2; }
-    .podium-2 { order: 1; }
-    .podium-3 { order: 3; }
-    .podium-medal { font-size: 40px; margin-bottom: 8px; }
-
-    .expandable-row { cursor: pointer; }
-    .expandable-row:hover { background-color: #fffbf7 !important; }
-
     @media (max-width: 640px) {
       .podium { grid-template-columns: 1fr; }
-      .podium-1, .podium-2, .podium-3 { grid-column: 1; order: unset; }
       .nav-btn { font-size: 12px; padding: 0.5rem 0.5rem; }
     }
   </style>
-  <style>body { box-sizing: border-box; }</style>
 </head>
-
 <body class="h-full font-body overflow-hidden">
   <div id="app" class="h-full w-full wine-gradient flex flex-col">
     <div class="flex-1 overflow-auto p-4 pb-20">
       <header class="text-center mb-6">
-        <h1 id="event-title" class="font-display text-3xl sm:text-4xl font-bold accent-light mb-1">🍷 Vinprovning</h1>
-        <p id="conn-status" class="text-xs text-white/80">Ansluter…</p>
+        <h1 id="event-title" class="font-display text-3xl sm:text-4xl font-bold accent-light mb-2">🍷 Vinprovning</h1>
+        <p id="event-subtitle" class="text-white/80 text-sm"></p>
       </header>
 
       <div class="flex justify-center gap-2 mb-6 flex-wrap max-w-6xl mx-auto">
-        <button id="btn-settings" onclick="showSettings()" class="px-2 sm:px-3 py-2 rounded-full btn-primary nav-btn font-semibold">⚙️ Inst.</button>
-        <button id="btn-tasting" onclick="showTasting()" class="px-2 sm:px-3 py-2 rounded-full bg-white/20 accent-light nav-btn font-semibold">🍷 Provning</button>
-        <button id="btn-quiz" onclick="showQuiz()" class="px-2 sm:px-3 py-2 rounded-full bg-white/20 accent-light nav-btn font-semibold">🧠 Quiz</button>
-        <button id="btn-tasting-results" onclick="showTastingResults()" class="px-2 sm:px-3 py-2 rounded-full bg-white/20 accent-light nav-btn font-semibold">🍇 Vin Res.</button>
-        <button id="btn-quiz-results" onclick="showQuizResults()" class="px-2 sm:px-3 py-2 rounded-full bg-white/20 accent-light nav-btn font-semibold">🏆 Quiz Res.</button>
+        <button id="btn-settings" class="px-2 sm:px-3 py-2 rounded-full btn-primary nav-btn font-semibold" onclick="showSettings()">⚙️ Inst.</button>
+        <button id="btn-tasting" class="px-2 sm:px-3 py-2 rounded-full bg-white/20 accent-light nav-btn font-semibold" onclick="showTasting()">🍷 Provning</button>
+        <button id="btn-quiz" class="px-2 sm:px-3 py-2 rounded-full bg-white/20 accent-light nav-btn font-semibold" onclick="showQuiz()">🧠 Quiz</button>
+        <button id="btn-tasting-results" class="px-2 sm:px-3 py-2 rounded-full bg-white/20 accent-light nav-btn font-semibold" onclick="showTastingResults()">🍇 Vin Res.</button>
+        <button id="btn-quiz-results" class="px-2 sm:px-3 py-2 rounded-full bg-white/20 accent-light nav-btn font-semibold" onclick="showQuizResults()">🏆 Quiz Res.</button>
       </div>
 
       <div class="max-w-4xl mx-auto">
@@ -96,10 +54,21 @@
           <h2 class="font-display text-2xl font-bold accent-deep mb-6">⚙️ Inställningar</h2>
 
           <div class="mb-8">
+            <h3 class="font-display text-lg font-bold accent-deep mb-4">Event</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input id="event-name-input" type="text" class="border border-gray-300 rounded-lg" placeholder="Eventnamn (visas som rubrik)" />
+              <button class="btn-primary rounded-lg font-semibold" onclick="saveEventName()">Spara eventnamn</button>
+            </div>
+            <p class="text-xs text-gray-600 mt-2">Tips: dela länken med <span class="font-mono">?event=mitt-event</span> för separata event.</p>
+          </div>
+
+          <hr class="my-8">
+
+          <div class="mb-8">
             <h3 class="font-display text-lg font-bold accent-deep mb-4">Deltagare</h3>
             <div id="participants-list" class="space-y-2 mb-4"></div>
-            <form id="participant-form" onsubmit="handleAddParticipant(event)" class="flex gap-2">
-              <input type="text" id="participant-name" placeholder="Deltagarens namn" class="flex-1 border border-gray-300 rounded-lg" required>
+            <form id="participant-form" class="flex gap-2" onsubmit="handleAddParticipant(event)">
+              <input type="text" id="participant-name" placeholder="Deltagarens namn" class="flex-1 border border-gray-300 rounded-lg" required />
               <button type="submit" class="px-6 btn-primary rounded-lg font-semibold">+ Lägg till</button>
             </form>
           </div>
@@ -108,19 +77,34 @@
 
           <div class="mb-8">
             <h3 class="font-display text-lg font-bold accent-deep mb-4">Lägg in viner</h3>
-            <form id="wine-form" onsubmit="handleAddWine(event)" class="space-y-3">
+            <form id="wine-form" class="space-y-3" onsubmit="handleAddWine(event)">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <input type="number" id="wine-number" placeholder="Vinnummer" class="border border-gray-300 rounded-lg" required>
-                <input type="text" id="wine-name" placeholder="Vinets namn" class="border border-gray-300 rounded-lg" required>
-                <input type="text" id="wine-grape" placeholder="Druva" class="border border-gray-300 rounded-lg" required>
-                <input type="number" id="wine-price" placeholder="Pris (bara siffror)" class="border border-gray-300 rounded-lg" required>
-                <input type="text" id="wine-country" placeholder="Land" class="border border-gray-300 rounded-lg" required>
+                <input type="number" id="wine-number" placeholder="Vinnummer" class="border border-gray-300 rounded-lg" required />
+                <input type="text" id="wine-name" placeholder="Vinets namn" class="border border-gray-300 rounded-lg" required />
+                <input type="text" id="wine-grape" placeholder="Druva" class="border border-gray-300 rounded-lg" required />
+                <input type="number" id="wine-price" placeholder="Pris (bara siffror)" class="border border-gray-300 rounded-lg" required />
+                <input type="text" id="wine-country" placeholder="Land" class="border border-gray-300 rounded-lg" required />
               </div>
               <button type="submit" class="w-full btn-primary rounded-lg font-semibold">✓ Lägg in vin</button>
             </form>
 
             <h3 class="font-display text-lg font-bold accent-deep mt-8 mb-4">Inlagda viner</h3>
             <div id="wines-list" class="space-y-2"></div>
+          </div>
+
+          <hr class="my-8">
+
+          <div class="mb-8">
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <h3 class="font-display text-lg font-bold accent-deep">Quizfrågor</h3>
+              <button class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onclick="loadDefaultQuestions()">Återställ standard</button>
+            </div>
+            <p class="text-xs text-gray-600 mb-4">Du kan skapa egna frågor här. De sparas per event och synkas live.</p>
+            <div id="quiz-editor" class="space-y-3"></div>
+            <div class="flex gap-2 mt-4">
+              <button class="flex-1 btn-primary rounded-lg font-semibold" onclick="addEmptyQuestion()">+ Ny fråga</button>
+              <button class="flex-1 bg-white border border-gray-300 rounded-lg font-semibold" onclick="saveQuizQuestions()">Spara quiz</button>
+            </div>
           </div>
 
           <hr class="my-8">
@@ -137,7 +121,6 @@
         <!-- TASTING -->
         <div id="tasting-section" class="hidden card-light rounded-xl shadow-xl p-6">
           <h2 class="font-display text-2xl font-bold accent-deep mb-6">🍷 Provning</h2>
-
           <div id="tasting-start" class="space-y-4">
             <p class="text-gray-700">Välj deltagare och vin för att börja provningen</p>
             <select id="tasting-participant" class="w-full border border-gray-300 rounded-lg" required>
@@ -154,65 +137,70 @@
               <h3 id="tasting-wine-title" class="font-display text-xl font-bold accent-deep mb-2"></h3>
             </div>
 
-            <div><label class="block text-xs font-semibold accent-deep mb-2">Gissa Land</label>
-              <input type="text" id="tasting-guess-country" placeholder="t.ex. Frankrike" class="w-full border border-gray-300 rounded-lg" required>
+            <div>
+              <label class="block text-xs font-semibold accent-deep mb-2">Gissa Land</label>
+              <input type="text" id="tasting-guess-country" placeholder="t.ex. Frankrike" class="w-full border border-gray-300 rounded-lg" required />
             </div>
-
-            <div><label class="block text-xs font-semibold accent-deep mb-2">Gissa Druva</label>
-              <input type="text" id="tasting-guess-grape" placeholder="t.ex. Pinot Noir" class="w-full border border-gray-300 rounded-lg" required>
+            <div>
+              <label class="block text-xs font-semibold accent-deep mb-2">Gissa Druva</label>
+              <input type="text" id="tasting-guess-grape" placeholder="t.ex. Pinot Noir" class="w-full border border-gray-300 rounded-lg" required />
             </div>
-
-            <div><label class="block text-xs font-semibold accent-deep mb-2">Gissa Pris (bara siffror)</label>
-              <input type="number" id="tasting-guess-price" placeholder="t.ex. 299" class="w-full border border-gray-300 rounded-lg" required>
+            <div>
+              <label class="block text-xs font-semibold accent-deep mb-2">Gissa Pris (bara siffror)</label>
+              <input type="number" id="tasting-guess-price" placeholder="t.ex. 299" class="w-full border border-gray-300 rounded-lg" required />
             </div>
 
             <hr class="my-4">
 
-            <div><label class="block text-xs font-semibold accent-deep mb-2">Aroma</label>
+            <div>
+              <label class="block text-xs font-semibold accent-deep mb-2">Aroma</label>
               <div class="flex gap-2">
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('aroma','Låg',event)">Låg</button>
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('aroma','Medel',event)">Medel</button>
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('aroma','Hög',event)">Hög</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('aroma','Låg', event)">Låg</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('aroma','Medel', event)">Medel</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('aroma','Hög', event)">Hög</button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold accent-deep mb-2">Fyllighet</label>
+              <div class="flex gap-2">
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('body','Lätt', event)">Lätt</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('body','Medium', event)">Medium</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('body','Fyllig', event)">Fyllig</button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold accent-deep mb-2">Syra</label>
+              <div class="flex gap-2">
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('acidity','Låg', event)">Låg</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('acidity','Medel', event)">Medel</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('acidity','Hög', event)">Hög</button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold accent-deep mb-2">Sötma</label>
+              <div class="flex gap-2">
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('sweetness','Torr', event)">Torr</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('sweetness','Halvtorr', event)">Halvtorr</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('sweetness','Söt', event)">Söt</button>
               </div>
             </div>
 
-            <div><label class="block text-xs font-semibold accent-deep mb-2">Fyllighet</label>
-              <div class="flex gap-2">
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('body','Lätt',event)">Lätt</button>
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('body','Medium',event)">Medium</button>
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('body','Fyllig',event)">Fyllig</button>
-              </div>
-            </div>
-
-            <div><label class="block text-xs font-semibold accent-deep mb-2">Syra</label>
-              <div class="flex gap-2">
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('acidity','Låg',event)">Låg</button>
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('acidity','Medel',event)">Medel</button>
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('acidity','Hög',event)">Hög</button>
-              </div>
-            </div>
-
-            <div><label class="block text-xs font-semibold accent-deep mb-2">Sötma</label>
-              <div class="flex gap-2">
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('sweetness','Torr',event)">Torr</button>
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('sweetness','Halvtorr',event)">Halvtorr</button>
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('sweetness','Söt',event)">Söt</button>
-              </div>
-            </div>
-
-            <div><label class="block text-xs font-semibold accent-deep mb-2">Betyg</label>
+            <div>
+              <label class="block text-xs font-semibold accent-deep mb-2">Betyg</label>
               <div class="star-rating" id="rating-stars"></div>
             </div>
 
-            <div><label class="block text-xs font-semibold accent-deep mb-2">Köpa igen?</label>
+            <div>
+              <label class="block text-xs font-semibold accent-deep mb-2">Köpa igen?</label>
               <div class="flex gap-2">
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('buy_again','Ja',event)">Ja</button>
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('buy_again','Kanske',event)">Kanske</button>
-                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('buy_again','Nej',event)">Nej</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('buy_again','Ja', event)">Ja</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('buy_again','Kanske', event)">Kanske</button>
+                <button type="button" class="option-btn flex-1" onclick="selectTastingOption('buy_again','Nej', event)">Nej</button>
               </div>
             </div>
 
-            <div><label class="block text-xs font-semibold accent-deep mb-2">Noteringar</label>
+            <div>
+              <label class="block text-xs font-semibold accent-deep mb-2">Noteringar</label>
               <textarea id="tasting-notes" placeholder="Dina noteringar om vinet..." class="w-full border border-gray-300 rounded-lg"></textarea>
             </div>
 
@@ -226,7 +214,6 @@
         <!-- QUIZ -->
         <div id="quiz-section" class="hidden card-light rounded-xl shadow-xl p-6">
           <h2 class="font-display text-2xl font-bold accent-deep mb-6">🧠 Quiz</h2>
-
           <div id="quiz-start" class="space-y-4">
             <p class="text-gray-700">Välj deltagare för att börja quizet</p>
             <select id="quiz-participant" class="w-full border border-gray-300 rounded-lg" required>
@@ -234,9 +221,7 @@
             </select>
             <button onclick="startQuiz()" class="w-full btn-primary rounded-lg font-semibold">Börja Quiz</button>
           </div>
-
           <div id="quiz-questions" class="hidden space-y-6"></div>
-
           <div id="quiz-submit" class="hidden mt-6">
             <button onclick="submitQuiz()" class="w-full btn-primary rounded-lg font-semibold text-lg py-3">📤 Skicka svar</button>
           </div>
@@ -246,10 +231,7 @@
         <div id="tasting-results-section" class="hidden card-light rounded-xl shadow-xl p-6">
           <h2 class="font-display text-2xl font-bold accent-deep mb-6">🍇 Vinprovningsresultat</h2>
           <div id="tasting-results-content" class="space-y-6"></div>
-
-          <button id="btn-reveal" onclick="toggleWineReveal(event)" class="w-full mt-8 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold py-3">
-            🎭 Avslöja Vinen
-          </button>
+          <button onclick="toggleWineReveal(event)" class="w-full mt-8 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold py-3">🎭 Avslöja Vinen</button>
           <div id="wine-reveal" class="hidden mt-6 space-y-3"></div>
         </div>
 
@@ -258,60 +240,63 @@
           <h2 class="font-display text-2xl font-bold accent-deep mb-6">🏆 Quizresultat</h2>
           <div id="quiz-results-content" class="space-y-6"></div>
         </div>
+
       </div>
     </div>
 
     <div id="toast" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-auto px-6 py-3 bg-green-600 text-white rounded-full shadow-lg opacity-0 transition-all z-40"></div>
   </div>
 
-  <!-- ✅ FIREBASE REALTIME: alla använder samma data samtidigt -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
     import {
-      getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot,
-      query, orderBy, serverTimestamp, getDocs, writeBatch
+      getFirestore, collection, doc, addDoc, deleteDoc, setDoc, getDoc,
+      onSnapshot, query, orderBy
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-    // 🔧 DIN config (som du gav)
-    const firebaseConfig = {
-      apiKey: "AIzaSyAVEdU2uNKw9bm4FFdXdPPQvcO5vw6bkrM",
-      authDomain: "vinprovning-3cd60.firebaseapp.com",
-      projectId: "vinprovning-3cd60",
-      storageBucket: "vinprovning-3cd60.firebasestorage.app",
-      messagingSenderId: "408622400735",
-      appId: "1:408622400735:web:6e04a1d0bb3ee7ddde556a"
-    };
+    function getEventId() {
+      const p = new URLSearchParams(location.search);
+      const raw = (p.get("event") || "default").trim().toLowerCase();
+      return raw.replace(/[^a-z0-9_-]/g, "");
+    }
+    const EVENT_ID = getEventId();
+    document.getElementById("event-subtitle").textContent = `Event: ${EVENT_ID}`;
 
+    const firebaseConfig = {"apiKey": "AIzaSyAVEdU2uNKw9bm4FFdXdPPQvcO5vw6bkrM", "authDomain": "vinprovning-3cd60.firebaseapp.com", "projectId": "vinprovning-3cd60", "storageBucket": "vinprovning-3cd60.firebasestorage.app", "messagingSenderId": "408622400735", "appId": "1:408622400735:web:6e04a1d0bb3ee7ddde556a"};
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const statusEl = document.getElementById("conn-status");
-    const setStatus = (t) => statusEl.textContent = t;
+    const itemsCol = collection(db, "events", EVENT_ID, "items");
+    const metaDoc = doc(db, "events", EVENT_ID, "meta", "config");
 
-    // Helpers (undvik XSS när vi renderar)
-    const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const escapeAttr = (s) => escapeHtml(s).replace(/"/g, "&quot;");
+    const defaultConfig = { event_title: "🍷 Vinprovning" };
 
-    // ==== Quiz frågor (oförändrade) ====
-    const QUIZ_QUESTIONS = [
+    let allItems = [];
+    let participants = [];
+    let wines = [];
+    let tastings = [];
+    let quizResults = [];
+    let quizQuestions = [];
+
+    let currentParticipant = null;
+    let currentWine = null;
+    let tastingData = {};
+    let currentRating = 0;
+    let quizAnswers = {};
+
+    const DEFAULT_QUESTIONS = [
       { id: 1, q: "1) Vilket land producerar mest vin i världen?", opts: [["1","Spanien"],["X","Italien"],["2","Frankrike"]], correct: "X" },
       { id: 2, q: "2) Vilken druva är huvuddruvan i rött vin från Barolo?", opts: [["1","Barbera"],["X","Sangiovese"],["2","Nebbiolo"]], correct: "2" },
       { id: 3, q: '3) Vad betyder "Sec" på en fransk vinetikett?', opts: [["1","Torrt"],["X","Halvtorrt/halvsött"],["2","Mycket sött"]], correct: "X" },
       { id: 4, q: "4) Vilket vinområde är mest känt för druvan Riesling?", opts: [["1","Rioja"],["X","Bordeaux"],["2","Mosel"]], correct: "2" },
       { id: 5, q: "5) Vad händer under malolaktisk jäsning?", opts: [["1","Sockret omvandlas till alkohol"],["X","Äppelsyra omvandlas till mjölksyra"],["2","Alkohol omvandlas till vinäger"]], correct: "X" },
-      { id: 6, q: "6) Vilket land kommer druvan Malbec ursprungligen från?", opts: [["1","Argentina"],["X","Chile"],["2","Frankrike"]], correct: "2" },
-      { id: 7, q: '7) Vad innebär "fatlagrat vin" oftast för smaken?', opts: [["1","Mer tannin, krydda och vaniljtoner"],["X","Lägre alkoholhalt"],["2","Mindre syra"]], correct: "1" },
-      { id: 8, q: "8) Cava produceras främst i…", opts: [["1","Italien"],["X","Spanien"],["2","Portugal"]], correct: "X" },
-      { id: 9, q: "9) Vad är Prosecco gjort främst på för druva?", opts: [["1","Glera"],["X","Trebbiano"],["2","Pinot Grigio"]], correct: "1" },
-      { id: 10, q: "10) Vilket klimat ger oftast viner med högre syra och lägre alkohol?", opts: [["1","Varmt klimat"],["X","Svalt klimat"],["2","Tropiskt klimat"]], correct: "X" },
-      { id: 11, q: '11) Vad betyder "Grand Cru" i Bourgogne?', opts: [["1","En speciell druva"],["X","En metod för lagring"],["2","Den högsta vingårdsklassificeringen"]], correct: "2" },
-      { id: 12, q: "12) Vilken färg får vin av lång skalkontakt med blå druvor?", opts: [["1","Mörkare färg och mer tannin"],["X","Ljusare färg"],["2","Ingen skillnad alls"]], correct: "1" },
-      { id: 13, q: "13) Vad är typiskt för Sauvignon Blanc från Nya Zeeland?", opts: [["1","Smöriga, ekiga toner"],["X","Hög syra och aromer av krusbär/citrus"],["2","Mycket tannin"]], correct: "X" },
-      { id: 14, q: "14) Hur görs rosévin oftast?", opts: [["1","Man blandar rött och vitt vin"],["X","Lång lagring på ekfat"],["2","Kort skalkontakt med blå druvor"]], correct: "2" },
-      { id: 15, q: '15) Vad betyder "Reserva" i spanska Rioja (generellt)?', opts: [["1","Högre lagringskrav än Crianza"],["X","Ekologiskt vin"],["2","Låg alkoholhalt"]], correct: "1" }
     ];
+
+    function escapeHtml(str) {
+      return String(str ?? "").replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s]));
+    }
 
     function getPriceRange(priceStr) {
       const price = parseInt(priceStr);
@@ -327,619 +312,446 @@
       return null;
     }
 
-    // State
-    let participants = [];
-    let wines = [];
-    let tastings = [];
-    let quizResults = [];
-
-    let currentParticipant = null;
-    let currentWine = null;
-    let tastingData = {};
-    let currentRating = 0;
-    let quizAnswers = {};
-    let wineRevealVisible = false;
-
-    // Collections
-    const colParticipants = collection(db, "participants");
-    const colWines = collection(db, "wines");
-    const colTastings = collection(db, "tastings");
-    const colQuiz = collection(db, "quizResults");
-
-    // Toast
-    window.showToast = function(msg, type = 'success') {
-      const toast = document.getElementById('toast');
+    function showToast(msg, type = "success") {
+      const toast = document.getElementById("toast");
       toast.textContent = msg;
-      toast.className = `fixed bottom-4 left-4 right-4 sm:left-auto sm:right-auto px-6 py-3 ${type === 'error' ? 'bg-red-600' : 'bg-green-600'} text-white rounded-full shadow-lg transition-all z-40`;
-      toast.style.opacity = '1';
-      setTimeout(() => toast.style.opacity = '0', 3000);
-    }
-
-    // Auth
-    setStatus("Ansluter…");
-    try {
-      await signInAnonymously(auth);
-    } catch (e) {
-      console.error(e);
-      setStatus("❌ Auth fel (kolla Anonymous + Authorized domains)");
-      showToast("Auth fel. Aktivera Anonymous + lägg till domänen i Authorized domains.", "error");
-    }
-    onAuthStateChanged(auth, (user) => { if (user) setStatus("✅ Ansluten (live)"); });
-
-    // Realtime listeners
-    onSnapshot(query(colParticipants, orderBy("createdAt", "asc")), (snap) => {
-      participants = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      rerender();
-    });
-
-    onSnapshot(query(colWines, orderBy("wine_number", "asc")), (snap) => {
-      wines = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      rerender();
-    });
-
-    onSnapshot(query(colTastings, orderBy("createdAt", "asc")), (snap) => {
-      tastings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      rerender();
-    });
-
-    onSnapshot(query(colQuiz, orderBy("createdAt", "asc")), (snap) => {
-      quizResults = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      rerender();
-    });
-
-    function rerender() {
-      if (!document.getElementById('settings-section').classList.contains('hidden')) {
-        renderParticipants();
-        renderWinesList();
-      }
-      if (!document.getElementById('tasting-section').classList.contains('hidden')) {
-        renderTastingSelects();
-      }
-      if (!document.getElementById('quiz-section').classList.contains('hidden')) {
-        renderQuizParticipants();
-      }
-      if (!document.getElementById('tasting-results-section').classList.contains('hidden')) {
-        renderTastingResultsPage();
-        if (wineRevealVisible) renderWineReveal();
-      }
-      if (!document.getElementById('quiz-results-section').classList.contains('hidden')) {
-        renderQuizResultsPage();
-      }
-    }
-
-    // ===== Navigation (global) =====
-    window.showSettings = () => setSection('settings');
-    window.showTasting = () => { setSection('tasting'); renderTastingSelects(); }
-    window.showQuiz = () => { setSection('quiz'); renderQuizParticipants(); }
-    window.showTastingResults = () => { setSection('tasting-results'); renderTastingResultsPage(); if (wineRevealVisible) renderWineReveal(); }
-    window.showQuizResults = () => { setSection('quiz-results'); renderQuizResultsPage(); }
-
-    function setSection(active) {
-      document.getElementById('settings-section').classList.toggle('hidden', active !== 'settings');
-      document.getElementById('tasting-section').classList.toggle('hidden', active !== 'tasting');
-      document.getElementById('quiz-section').classList.toggle('hidden', active !== 'quiz');
-      document.getElementById('tasting-results-section').classList.toggle('hidden', active !== 'tasting-results');
-      document.getElementById('quiz-results-section').classList.toggle('hidden', active !== 'quiz-results');
-      updateNav(active);
-      rerender();
+      toast.className = `fixed bottom-4 left-4 right-4 sm:left-auto sm:right-auto px-6 py-3 ${type === "error" ? "bg-red-600" : "bg-green-600"} text-white rounded-full shadow-lg transition-all z-40`;
+      toast.style.opacity = "1";
+      setTimeout(() => (toast.style.opacity = "0"), 3000);
     }
 
     function updateNav(active) {
-      const btns = { settings: 'btn-settings', tasting: 'btn-tasting', quiz: 'btn-quiz', 'tasting-results': 'btn-tasting-results', 'quiz-results': 'btn-quiz-results' };
+      const btns = { settings: "btn-settings", tasting: "btn-tasting", quiz: "btn-quiz", "tasting-results":"btn-tasting-results", "quiz-results":"btn-quiz-results" };
       Object.entries(btns).forEach(([key, id]) => {
         const btn = document.getElementById(id);
-        if (key === active) { btn.classList.add('btn-primary'); btn.classList.remove('bg-white/20'); }
-        else { btn.classList.remove('btn-primary'); btn.classList.add('bg-white/20'); }
+        if (key === active) {
+          btn.classList.add("btn-primary");
+          btn.classList.remove("bg-white/20");
+        } else {
+          btn.classList.remove("btn-primary");
+          btn.classList.add("bg-white/20");
+        }
       });
     }
 
-    // ===== CRUD: participants =====
-    window.handleAddParticipant = async (e) => {
-      e.preventDefault();
-      const name = document.getElementById('participant-name').value.trim();
-      if (!name) return;
+    window.showSettings = function() {
+      document.getElementById("settings-section").classList.remove("hidden");
+      document.getElementById("tasting-section").classList.add("hidden");
+      document.getElementById("quiz-section").classList.add("hidden");
+      document.getElementById("tasting-results-section").classList.add("hidden");
+      document.getElementById("quiz-results-section").classList.add("hidden");
+      updateNav("settings");
+      renderParticipants();
+      renderWinesList();
+      renderQuizEditor();
+    };
 
+    window.showTasting = function() {
+      document.getElementById("settings-section").classList.add("hidden");
+      document.getElementById("tasting-section").classList.remove("hidden");
+      document.getElementById("quiz-section").classList.add("hidden");
+      document.getElementById("tasting-results-section").classList.add("hidden");
+      document.getElementById("quiz-results-section").classList.add("hidden");
+      updateNav("tasting");
+      renderTastingSelects();
+    };
+
+    window.showQuiz = function() {
+      document.getElementById("settings-section").classList.add("hidden");
+      document.getElementById("tasting-section").classList.add("hidden");
+      document.getElementById("quiz-section").classList.remove("hidden");
+      document.getElementById("tasting-results-section").classList.add("hidden");
+      document.getElementById("quiz-results-section").classList.add("hidden");
+      updateNav("quiz");
+      renderQuizParticipants();
+    };
+
+    window.showTastingResults = function() {
+      document.getElementById("settings-section").classList.add("hidden");
+      document.getElementById("tasting-section").classList.add("hidden");
+      document.getElementById("quiz-section").classList.add("hidden");
+      document.getElementById("tasting-results-section").classList.remove("hidden");
+      document.getElementById("quiz-results-section").classList.add("hidden");
+      updateNav("tasting-results");
+      renderTastingResultsPage();
+    };
+
+    window.showQuizResults = function() {
+      document.getElementById("settings-section").classList.add("hidden");
+      document.getElementById("tasting-section").classList.add("hidden");
+      document.getElementById("quiz-section").classList.add("hidden");
+      document.getElementById("tasting-results-section").classList.add("hidden");
+      document.getElementById("quiz-results-section").classList.remove("hidden");
+      updateNav("quiz-results");
+      renderQuizResultsPage();
+    };
+
+    async function ensureSignedIn() {
+      if (auth.currentUser) return auth.currentUser;
+      await signInAnonymously(auth);
+      return auth.currentUser;
+    }
+
+    async function createItem(data) {
+      await ensureSignedIn();
+      const ref = await addDoc(itemsCol, { ...data, createdAt: Date.now() });
+      return ref.id;
+    }
+
+    async function deleteItemById(id) {
+      await ensureSignedIn();
+      await deleteDoc(doc(itemsCol, id));
+    }
+
+    window.deleteItem = async function(id) {
+      try { await deleteItemById(id); }
+      catch (e) { console.error(e); showToast("Kunde inte ta bort (kolla Firestore Rules)", "error"); }
+    };
+
+    async function loadEventConfig() {
       try {
-        await addDoc(colParticipants, { participant_name: name, createdAt: serverTimestamp() });
-        document.getElementById('participant-name').value = '';
-        showToast('Deltagare tillagd!');
+        const snap = await getDoc(metaDoc);
+        const cfg = snap.exists() ? snap.data() : {};
+        const title = cfg.event_title || defaultConfig.event_title;
+        document.getElementById("event-title").textContent = title;
+        document.getElementById("event-name-input").value = title;
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    window.saveEventName = async function() {
+      const title = document.getElementById("event-name-input").value.trim() || defaultConfig.event_title;
+      try {
+        await ensureSignedIn();
+        await setDoc(metaDoc, { event_title: title }, { merge: true });
+        showToast("Eventnamn sparat!");
+      } catch (e) {
+        console.error(e);
+        showToast("Kunde inte spara eventnamn (kolla Rules)", "error");
+      }
+    };
+
+    window.handleAddParticipant = async function(e) {
+      e.preventDefault();
+      const name = document.getElementById("participant-name").value.trim();
+      if (!name) return;
+      try {
+        await createItem({ type: "participant", participant_name: name });
+        document.getElementById("participant-name").value = "";
+        showToast("Deltagare tillagd!");
       } catch (err) {
         console.error(err);
-        showToast('Kunde inte lägga till deltagare', 'error');
+        showToast("Kunde inte lägga till deltagare (kolla Rules)", "error");
+      }
+    };
+
+    window.handleAddWine = async function(e) {
+      e.preventDefault();
+      const payload = {
+        type: "wine",
+        wine_number: parseInt(document.getElementById("wine-number").value),
+        wine_name: document.getElementById("wine-name").value.trim(),
+        grape: document.getElementById("wine-grape").value.trim(),
+        price: parseInt(document.getElementById("wine-price").value),
+        country: document.getElementById("wine-country").value.trim(),
+      };
+      try {
+        await createItem(payload);
+        document.getElementById("wine-form").reset();
+        showToast("Vin tillagd!");
+      } catch (err) {
+        console.error(err);
+        showToast("Kunde inte lägga till vin (kolla Rules)", "error");
       }
     };
 
     function renderParticipants() {
-      const container = document.getElementById('participants-list');
-      const parts = [...participants].sort((a,b) => (a.participant_name||'').localeCompare(b.participant_name||''));
+      const container = document.getElementById("participants-list");
+      const parts = participants.slice().sort((a,b) => (a.participant_name||"").localeCompare(b.participant_name||""));
       container.innerHTML = parts.map(p => `
         <div class="flex justify-between items-center bg-white p-3 rounded-lg">
           <span class="accent-deep font-semibold">${escapeHtml(p.participant_name)}</span>
-          <button onclick="deleteDocById('participants','${p.id}')" class="text-red-600">✕</button>
+          <button class="text-red-600" onclick="deleteItem('${p.id}')">✕</button>
         </div>
-      `).join('');
+      `).join("");
     }
-
-    // ===== CRUD: wines =====
-    window.handleAddWine = async (e) => {
-      e.preventDefault();
-      const wine_number = parseInt(document.getElementById('wine-number').value);
-      const wine_name = document.getElementById('wine-name').value.trim();
-      const grape = document.getElementById('wine-grape').value.trim();
-      const price = parseInt(document.getElementById('wine-price').value);
-      const country = document.getElementById('wine-country').value.trim();
-
-      if (!wine_number || !wine_name || !grape || !price || !country) {
-        showToast('Fyll i alla fält', 'error');
-        return;
-      }
-
-      try {
-        await addDoc(colWines, { wine_number, wine_name, grape, price, country, createdAt: serverTimestamp() });
-        document.getElementById('wine-form').reset();
-        showToast('Vin tillagd!');
-      } catch (err) {
-        console.error(err);
-        showToast('Kunde inte lägga till vin', 'error');
-      }
-    };
 
     function renderWinesList() {
-      const container = document.getElementById('wines-list');
-      const list = [...wines].sort((a,b) => (a.wine_number||0) - (b.wine_number||0));
-      container.innerHTML = list.map(w => `
+      const container = document.getElementById("wines-list");
+      const wineList = wines.slice().sort((a,b) => (a.wine_number||0) - (b.wine_number||0));
+      container.innerHTML = wineList.map(w => `
         <div class="flex justify-between items-center bg-white p-3 rounded-lg">
-<span class="accent-deep font-semibold">Vin ${w.wine_number}</span>
-<button onclick="deleteDocById('wines','${w.id}')" class="text-red-600">✕</button>
+          <span class="accent-deep font-semibold">Vin ${w.wine_number}</span>
+          <button class="text-red-600" onclick="deleteItem('${w.id}')">✕</button>
         </div>
-      `).join('');
+      `).join("");
     }
 
-    window.deleteDocById = async (collectionName, id) => {
-      try { await deleteDoc(doc(db, collectionName, id)); }
-      catch (err) { console.error(err); showToast('Kunde inte ta bort', 'error'); }
-    };
-
-    // ===== Reset (batch delete) =====
-    window.resetTastings = () => confirmModal(
-      "Är du säker? Detta tar bort alla vinprovningar.",
-      async () => { await deleteAllInCollection("tastings"); showToast("Vinprovningar återställda!"); }
-    );
-
-    window.resetQuiz = () => confirmModal(
-      "Är du säker? Detta tar bort alla quizresultat.",
-      async () => { await deleteAllInCollection("quizResults"); showToast("Quizresultat återställda!"); }
-    );
-
-    function confirmModal(text, onConfirm) {
-      const confirmDiv = document.createElement('div');
-      confirmDiv.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
-      confirmDiv.innerHTML = `
-        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm">
-          <p class="font-semibold text-gray-800 mb-4">${escapeHtml(text)}</p>
-          <div class="flex gap-2">
-            <button id="btn-cancel" class="flex-1 bg-gray-300 text-gray-700 rounded-lg font-semibold py-2">Avbryt</button>
-            <button id="btn-ok" class="flex-1 bg-red-600 text-white rounded-lg font-semibold py-2">Ta bort</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(confirmDiv);
-      confirmDiv.querySelector("#btn-cancel").onclick = () => confirmDiv.remove();
-      confirmDiv.querySelector("#btn-ok").onclick = async () => { confirmDiv.remove(); await onConfirm(); };
-    }
-
-    async function deleteAllInCollection(collectionName) {
-      const q = query(collection(db, collectionName));
-      const snap = await getDocs(q);
-      const batch = writeBatch(db);
-      snap.docs.forEach(d => batch.delete(d.ref));
-      await batch.commit();
-    }
-
-    // ===== Tasting =====
     function renderTastingSelects() {
-      const participantSelect = document.getElementById('tasting-participant');
-      const wineSelect = document.getElementById('tasting-wine');
+      const participantSelect = document.getElementById("tasting-participant");
+      const wineSelect = document.getElementById("tasting-wine");
+      const parts = participants.slice().sort((a,b)=> (a.participant_name||"").localeCompare(b.participant_name||""));
+      const wineList = wines.slice().sort((a,b)=> (a.wine_number||0) - (b.wine_number||0));
 
-      const currentP = participantSelect.value;
-      const currentW = wineSelect.value;
+      participantSelect.innerHTML =
+        '<option value="">-- Välj deltagare --</option>' +
+        parts.map(p => `<option value="${escapeHtml(p.participant_name)}">${escapeHtml(p.participant_name)}</option>`).join("");
 
-      const parts = [...participants].sort((a,b) => (a.participant_name||'').localeCompare(b.participant_name||''));
-      const wineList = [...wines].sort((a,b) => (a.wine_number||0) - (b.wine_number||0));
-
-      participantSelect.innerHTML = '<option value="">-- Välj deltagare --</option>' +
-        parts.map(p => `<option value="${escapeAttr(p.participant_name)}">${escapeHtml(p.participant_name)}</option>`).join('');
-
-      wineSelect.innerHTML = '<option value="">-- Välj vin --</option>' +
-        wineList.map(w => `<option value="${w.id}">Vin ${w.wine_number}</option>`).join('');
-
-      if (parts.some(p => p.participant_name === currentP)) participantSelect.value = currentP;
-      if (wineList.some(w => w.id === currentW)) wineSelect.value = currentW;
+      wineSelect.innerHTML =
+        '<option value="">-- Välj vin --</option>' +
+        wineList.map(w => `<option value="${w.id}">Vin ${w.wine_number}</option>`).join("");
     }
 
-    window.startTasting = () => {
-      const participantName = document.getElementById('tasting-participant').value;
-      const wineId = document.getElementById('tasting-wine').value;
-
-      if (!participantName || !wineId) { showToast('Välj deltagare och vin', 'error'); return; }
+    window.startTasting = function() {
+      const participantName = document.getElementById("tasting-participant").value;
+      const wineId = document.getElementById("tasting-wine").value;
+      if (!participantName || !wineId) { showToast("Välj deltagare och vin", "error"); return; }
 
       const wine = wines.find(w => w.id === wineId);
-      if (!wine) { showToast('Vinet hittas inte', 'error'); return; }
+      if (!wine) { showToast("Hittar inte vinet (ladda om)", "error"); return; }
 
       currentParticipant = participantName;
       currentWine = wine;
       tastingData = {};
       currentRating = 0;
 
-      document.getElementById('tasting-start').classList.add('hidden');
-      document.getElementById('tasting-form').classList.remove('hidden');
-      document.getElementById('tasting-wine-title').textContent = `Vin ${wine.wine_number}`;
+      document.getElementById("tasting-start").classList.add("hidden");
+      document.getElementById("tasting-form").classList.remove("hidden");
+      document.getElementById("tasting-wine-title").textContent = `Vin ${wine.wine_number}`;
+      document.getElementById("tasting-guess-country").value = "";
+      document.getElementById("tasting-guess-grape").value = "";
+      document.getElementById("tasting-guess-price").value = "";
+      document.getElementById("tasting-notes").value = "";
+      document.querySelectorAll("#tasting-form .option-btn").forEach(btn => btn.classList.remove("selected"));
 
-      document.getElementById('tasting-guess-country').value = '';
-      document.getElementById('tasting-guess-grape').value = '';
-      document.getElementById('tasting-guess-price').value = '';
-      document.getElementById('tasting-notes').value = '';
-
-      document.querySelectorAll('#tasting-form .option-btn').forEach(btn => btn.classList.remove('selected'));
       renderStars();
     };
 
     function renderStars() {
-      const container = document.getElementById('rating-stars');
-      container.innerHTML = Array.from({ length: 5 }, (_, i) => `
-        <button type="button" class="star-btn" onclick="setRating(${i + 1})">${i < currentRating ? '★' : '☆'}</button>
-      `).join('');
+      const container = document.getElementById("rating-stars");
+      container.innerHTML = Array.from({length:5}, (_,i) => `
+        <button type="button" class="star-btn" onclick="setRating(${i+1})">${i < currentRating ? "★" : "☆"}</button>
+      `).join("");
     }
 
-    window.setRating = (rating) => {
+    window.setRating = function(rating) {
       currentRating = rating;
       tastingData.rating = rating;
       renderStars();
     };
 
-    window.selectTastingOption = (field, value, evt) => {
+    window.selectTastingOption = function(field, value, evt) {
       tastingData[field] = value;
-      const buttons = evt.currentTarget.parentElement.querySelectorAll('.option-btn');
-      buttons.forEach(btn => btn.classList.remove('selected'));
-      evt.currentTarget.classList.add('selected');
+      const buttons = evt.target.parentElement.querySelectorAll(".option-btn");
+      buttons.forEach(btn => btn.classList.remove("selected"));
+      evt.target.classList.add("selected");
     };
 
-    window.submitTasting = async () => {
-      if (!currentWine || !currentParticipant) { showToast('Starta provning först', 'error'); return; }
-
-      const guess_country = document.getElementById('tasting-guess-country').value.trim();
-      const guess_grape = document.getElementById('tasting-guess-grape').value.trim();
-      const guess_price = String(document.getElementById('tasting-guess-price').value || '').trim();
-      const notes = document.getElementById('tasting-notes').value || '';
-
-      if (!guess_country || !guess_grape || !guess_price) { showToast('Fyll i gissningar', 'error'); return; }
-      if (!tastingData.aroma || !tastingData.body || !tastingData.acidity || !tastingData.sweetness || !tastingData.buy_again || !tastingData.rating) {
-        showToast('Fyll i alla fält', 'error'); return;
+    window.submitTasting = async function() {
+      if (!currentParticipant || !currentWine) return;
+      if (!tastingData.aroma || !tastingData.body || !tastingData.acidity || !tastingData.sweetness || !tastingData.buy_again) {
+        showToast("Fyll i alla fält", "error");
+        return;
       }
-
       try {
-        await addDoc(colTastings, {
+        await createItem({
+          type: "tasting",
           participant_name: currentParticipant,
-          wine_id: currentWine.id,
           wine_number: currentWine.wine_number,
-          guess_country,
-          guess_grape,
-          guess_price,
+          guess_country: document.getElementById("tasting-guess-country").value.trim(),
+          guess_grape: document.getElementById("tasting-guess-grape").value.trim(),
+          guess_price: String(document.getElementById("tasting-guess-price").value).trim(),
           aroma: tastingData.aroma,
           body: tastingData.body,
           acidity: tastingData.acidity,
           sweetness: tastingData.sweetness,
-          rating: tastingData.rating,
+          rating: tastingData.rating || 0,
           buy_again: tastingData.buy_again,
-          notes: String(notes),
-          createdAt: serverTimestamp()
+          notes: document.getElementById("tasting-notes").value.trim()
         });
-
-        showToast('Provning sparad!');
+        showToast("Provning sparad!");
         cancelTasting();
-      } catch (err) {
-        console.error(err);
-        showToast('Kunde inte spara provning', 'error');
+      } catch (e) {
+        console.error(e);
+        showToast("Kunde inte spara provning (kolla Rules)", "error");
       }
     };
 
-    window.cancelTasting = () => {
-      document.getElementById('tasting-start').classList.remove('hidden');
-      document.getElementById('tasting-form').classList.add('hidden');
-      document.getElementById('tasting-participant').value = '';
-      document.getElementById('tasting-wine').value = '';
+    window.cancelTasting = function() {
+      document.getElementById("tasting-start").classList.remove("hidden");
+      document.getElementById("tasting-form").classList.add("hidden");
+      document.getElementById("tasting-participant").value = "";
+      document.getElementById("tasting-wine").value = "";
       currentParticipant = null;
       currentWine = null;
       tastingData = {};
       currentRating = 0;
     };
 
-    // ===== Quiz =====
-    function renderQuizParticipants() {
-      const select = document.getElementById('quiz-participant');
-      const current = select.value;
-
-      const parts = [...participants].sort((a,b) => (a.participant_name||'').localeCompare(b.participant_name||''));
-      select.innerHTML = '<option value="">-- Välj deltagare --</option>' +
-        parts.map(p => `<option value="${escapeAttr(p.participant_name)}">${escapeHtml(p.participant_name)}</option>`).join('');
-
-      if (parts.some(p => p.participant_name === current)) select.value = current;
+    function getQuestionsForRun() {
+      const qs = (quizQuestions && quizQuestions.length ? quizQuestions : DEFAULT_QUESTIONS).map((q, idx) => {
+        const id = q.id ?? (idx+1);
+        const opts = Array.isArray(q.opts) ? q.opts : [["1",""],["X",""],["2",""]];
+        const correct = q.correct ?? "1";
+        return { id, q: q.q ?? "", opts, correct };
+      });
+      return qs;
     }
 
-    window.startQuiz = () => {
-      const selected = document.getElementById('quiz-participant').value;
-      if (!selected) { showToast('Välj deltagare', 'error'); return; }
+    function renderQuizParticipants() {
+      const select = document.getElementById("quiz-participant");
+      const parts = participants.slice().sort((a,b)=> (a.participant_name||"").localeCompare(b.participant_name||""));
+      select.innerHTML = '<option value="">-- Välj deltagare --</option>' + parts.map(p => `<option value="${escapeHtml(p.participant_name)}">${escapeHtml(p.participant_name)}</option>`).join("");
+    }
+
+    window.startQuiz = function() {
+      const selected = document.getElementById("quiz-participant").value;
+      if (!selected) { showToast("Välj deltagare", "error"); return; }
 
       currentParticipant = selected;
       quizAnswers = {};
 
-      document.getElementById('quiz-start').classList.add('hidden');
-      document.getElementById('quiz-questions').classList.remove('hidden');
-      document.getElementById('quiz-submit').classList.remove('hidden');
-
+      document.getElementById("quiz-start").classList.add("hidden");
+      document.getElementById("quiz-questions").classList.remove("hidden");
+      document.getElementById("quiz-submit").classList.remove("hidden");
       renderQuizQuestions();
     };
 
     function renderQuizQuestions() {
-      const container = document.getElementById('quiz-questions');
-      container.innerHTML = QUIZ_QUESTIONS.map(q => `
+      const container = document.getElementById("quiz-questions");
+      const QUESTIONS = getQuestionsForRun();
+      container.innerHTML = QUESTIONS.map(q => `
         <div class="bg-white p-4 rounded-lg" data-q-id="${q.id}">
           <p class="font-semibold text-gray-800 mb-3">${escapeHtml(q.q)}</p>
           <div class="space-y-2">
-            ${q.opts.map(([key, value]) => `
-              <button type="button" class="option-btn w-full text-left rounded-lg" onclick="selectQuizAnswer(${q.id}, '${key}', event)">
-                <span class="font-bold mr-3">${key}</span>${escapeHtml(value)}
+            ${q.opts.map(([key,value]) => `
+              <button type="button" class="option-btn w-full text-left rounded-lg" data-answer="${escapeHtml(key)}" onclick="selectQuizAnswer(${q.id}, '${escapeHtml(key)}', event)">
+                <span class="font-bold mr-3">${escapeHtml(key)}</span>${escapeHtml(value)}
               </button>
-            `).join('')}
+            `).join("")}
           </div>
         </div>
-      `).join('');
+      `).join("");
     }
 
-    window.selectQuizAnswer = (questionId, answer, evt) => {
+    window.selectQuizAnswer = function(questionId, answer, evt) {
       quizAnswers[questionId] = answer;
-      const card = evt.currentTarget.closest('[data-q-id]');
-      card.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
-      evt.currentTarget.classList.add('selected');
+      const container = evt.target.closest("[data-q-id]");
+      container.querySelectorAll(".option-btn").forEach(btn => btn.classList.remove("selected"));
+      evt.target.closest(".option-btn").classList.add("selected");
     };
 
-    window.submitQuiz = async () => {
-      if (!currentParticipant) { showToast('Välj deltagare', 'error'); return; }
-
+    window.submitQuiz = async function() {
+      const QUESTIONS = getQuestionsForRun();
       let score = 0;
-      QUIZ_QUESTIONS.forEach(q => { if (quizAnswers[q.id] === q.correct) score++; });
+      QUESTIONS.forEach(q => { if (quizAnswers[q.id] === q.correct) score++; });
 
       try {
-        await addDoc(colQuiz, {
+        await createItem({
+          type: "quiz",
           participant_name: currentParticipant,
           quiz_answers: JSON.stringify(quizAnswers),
-          quiz_score: score,
-          createdAt: serverTimestamp()
+          quiz_score: score
         });
-
-        showToast(`Klart! Du fick ${score}/15 rätt!`);
+        showToast(`Klart! Du fick ${score}/${QUESTIONS.length} rätt!`);
         currentParticipant = null;
         quizAnswers = {};
-
-        document.getElementById('quiz-start').classList.remove('hidden');
-        document.getElementById('quiz-questions').classList.add('hidden');
-        document.getElementById('quiz-submit').classList.add('hidden');
-        document.getElementById('quiz-participant').value = '';
-      } catch (err) {
-        console.error(err);
-        showToast('Kunde inte spara quiz', 'error');
+        document.getElementById("quiz-start").classList.remove("hidden");
+        document.getElementById("quiz-questions").classList.add("hidden");
+        document.getElementById("quiz-submit").classList.add("hidden");
+        document.getElementById("quiz-participant").value = "";
+      } catch (e) {
+        console.error(e);
+        showToast("Kunde inte spara quiz (kolla Rules)", "error");
       }
     };
 
-    // ===== Results: tasting =====
-    function analyzeWineTastes() {
-      const analysis = { sweetest:null, driest:null, fullest:null, lightest:null, mostAroma:null, leastAroma:null, mostAcidity:null, leastAcidity:null };
-      const wineAnalysis = {};
-      wines.forEach(w => { wineAnalysis[w.wine_number] = { sweetness:[], body:[], aroma:[], acidity:[] }; });
+    function renderRankedList(items, getLabel, getScoreText) {
+      const medals = ["🥇","🥈","🥉"];
+      let html = "";
 
-      tastings.forEach(t => {
-        if (!wineAnalysis[t.wine_number]) return;
-        wineAnalysis[t.wine_number].sweetness.push(t.sweetness);
-        wineAnalysis[t.wine_number].body.push(t.body);
-        wineAnalysis[t.wine_number].aroma.push(t.aroma);
-        wineAnalysis[t.wine_number].acidity.push(t.acidity);
-      });
+      const top3 = items.slice(0, 3);
+      if (top3.length) {
+        html += '<div class="podium">';
+        top3.forEach((it, idx) => {
+          html += `
+            <div class="podium-position">
+              <div class="podium-medal">${medals[idx]}</div>
+              <p class="font-bold accent-deep">${escapeHtml(getLabel(it))}</p>
+              <p class="text-2xl font-display font-bold accent-deep">${escapeHtml(getScoreText(it))}</p>
+              <p class="text-xs text-gray-500 mt-1">#${idx+1}</p>
+            </div>
+          `;
+        });
+        html += "</div>";
+      }
 
-      const count = (arr, val) => arr.filter(x => x === val).length;
-      let maxSweet='', minSweet='', maxBody='', minBody='', maxAroma='', minAroma='', maxAcid='', minAcid='';
-      let maxSweetC=0, minSweetC=0, maxBodyC=0, minBodyC=0, maxAromaC=0, minAromaC=0, maxAcidC=0, minAcidC=0;
+      if (items.length > 3) {
+        html += '<div class="bg-white rounded-lg overflow-hidden border border-gray-200">';
+        html += '<div class="grid grid-cols-12 gap-2 px-4 py-2 text-xs font-semibold text-gray-600 bg-gray-50"><div class="col-span-2">Plac</div><div class="col-span-7">Namn</div><div class="col-span-3 text-right">Resultat</div></div>';
+        items.slice(3).forEach((it, i) => {
+          const place = i + 4;
+          html += `<div class="grid grid-cols-12 gap-2 px-4 py-3 border-t">
+            <div class="col-span-2 font-semibold text-gray-700">${place}</div>
+            <div class="col-span-7 text-gray-800">${escapeHtml(getLabel(it))}</div>
+            <div class="col-span-3 text-right font-semibold">${escapeHtml(getScoreText(it))}</div>
+          </div>`;
+        });
+        html += "</div>";
+      }
 
-      Object.entries(wineAnalysis).forEach(([wineNum, data]) => {
-        const sweet = count(data.sweetness,'Söt'); if (sweet > maxSweetC){ maxSweetC = sweet; maxSweet = wineNum; }
-        const dry = count(data.sweetness,'Torr'); if (dry > minSweetC){ minSweetC = dry; minSweet = wineNum; }
-        const full = count(data.body,'Fyllig'); if (full > maxBodyC){ maxBodyC = full; maxBody = wineNum; }
-        const light = count(data.body,'Lätt'); if (light > minBodyC){ minBodyC = light; minBody = wineNum; }
-        const aromaH = count(data.aroma,'Hög'); if (aromaH > maxAromaC){ maxAromaC = aromaH; maxAroma = wineNum; }
-        const aromaL = count(data.aroma,'Låg'); if (aromaL > minAromaC){ minAromaC = aromaL; minAroma = wineNum; }
-        const acidH = count(data.acidity,'Hög'); if (acidH > maxAcidC){ maxAcidC = acidH; maxAcid = wineNum; }
-        const acidL = count(data.acidity,'Låg'); if (acidL > minAcidC){ minAcidC = acidL; minAcid = wineNum; }
-      });
-
-      analysis.sweetest = maxSweet || null;
-      analysis.driest = minSweet || null;
-      analysis.fullest = maxBody || null;
-      analysis.lightest = minBody || null;
-      analysis.mostAroma = maxAroma || null;
-      analysis.leastAroma = minAroma || null;
-      analysis.mostAcidity = maxAcid || null;
-      analysis.leastAcidity = minAcid || null;
-      return analysis;
+      return html;
     }
 
-    window.toggleGuessingDetails = (root) => {
-      const details = root.querySelector("[data-details='guess']");
-      details.classList.toggle("hidden");
-    };
-
     function renderTastingResultsPage() {
-      const container = document.getElementById('tasting-results-content');
-      const medals = ['🥇', '🥈', '🥉'];
+      const container = document.getElementById("tasting-results-content");
+      if (!tastings.length) { container.innerHTML = '<p class="text-gray-600">Inga provningar ännu</p>'; return; }
 
-      if (tastings.length === 0) {
-        container.innerHTML = '<p class="text-gray-600">Inga provningar ännu</p>';
-        return;
-      }
-
-      // Ratings
-      const winesByRating = {};
+      const byWine = new Map();
       tastings.forEach(t => {
-        if (!winesByRating[t.wine_number]) winesByRating[t.wine_number] = { total:0, count:0 };
-        winesByRating[t.wine_number].total += Number(t.rating || 0);
-        winesByRating[t.wine_number].count += 1;
+        const key = t.wine_number;
+        const prev = byWine.get(key) || { total: 0, count: 0 };
+        prev.total += Number(t.rating || 0);
+        prev.count += 1;
+        byWine.set(key, prev);
       });
 
-      const ratedWines = Object.entries(winesByRating)
-        .map(([wineNum, data]) => {
-          const wine = wines.find(w => String(w.wine_number) === String(wineNum));
-          return { wine_number: wineNum, wine_name: wine?.wine_name || '', avg_rating: (data.total / data.count).toFixed(1) };
-        })
-        .sort((a,b) => Number(b.avg_rating) - Number(a.avg_rating));
+      const ratedWines = Array.from(byWine.entries()).map(([wineNum, d]) => {
+        const wine = wines.find(w => w.wine_number == wineNum);
+        return { wine_number: wineNum, wine_name: wine?.wine_name || "", avg_rating: d.count ? (d.total / d.count) : 0 };
+      }).sort((a,b) => b.avg_rating - a.avg_rating);
 
-      let html = '';
+      let html = "";
       html += '<div class="mb-8"><h3 class="font-display text-xl font-bold accent-deep mb-4">⭐ Bästa Vin (Betyg)</h3>';
-      html += '<div class="podium">';
-      const top3 = ratedWines.slice(0,3);
-      [1,0,2].forEach(idx => {
-        if (idx < top3.length) {
-          const w = top3[idx];
-          html += `
-            <div class="podium-position podium-${idx+1}">
-              <div class="podium-medal">${medals[idx]}</div>
-              <p class="font-bold accent-deep">Vin ${w.wine_number}</p>
-              <p class="text-sm text-gray-600">${escapeHtml(w.wine_name)}</p>
-              <p class="text-2xl font-display font-bold accent-deep">⭐${w.avg_rating}</p>
-            </div>
-          `;
-        }
-      });
-      html += '</div></div><hr class="my-8">';
+      html += renderRankedList(ratedWines, (w) => `Vin ${w.wine_number}${w.wine_name ? ": " + w.wine_name : ""}`, (w) => `⭐${w.avg_rating.toFixed(1)}`);
+      html += "</div><hr class='my-8'>";
 
-      // Guessing results
-      const guessingScores = {};
-      const guessingDetails = {};
-
+      const scores = new Map();
       tastings.forEach(t => {
-        if (!guessingScores[t.participant_name]) guessingScores[t.participant_name] = 0;
-        if (!guessingDetails[t.participant_name]) guessingDetails[t.participant_name] = [];
-
-        const wine = wines.find(w => String(w.wine_number) === String(t.wine_number));
+        const wine = wines.find(w => w.wine_number === t.wine_number);
         if (!wine) return;
-
         let pts = 0;
-        const countryCorrect = (t.guess_country || "").toLowerCase() === (wine.country || "").toLowerCase();
-        const grapeCorrect = (t.guess_grape || "").toLowerCase() === (wine.grape || "").toLowerCase();
-        if (countryCorrect) pts += 2;
-        if (grapeCorrect) pts += 5;
-
+        if ((t.guess_country||"").toLowerCase() === (wine.country||"").toLowerCase()) pts += 2;
+        if ((t.guess_grape||"").toLowerCase() === (wine.grape||"").toLowerCase()) pts += 5;
         const guessedRange = getPriceRange(t.guess_price);
         const actualRange = getPriceRange(wine.price);
-        const priceCorrect = guessedRange && actualRange && guessedRange === actualRange;
-        if (priceCorrect) pts += 2;
-
-        guessingScores[t.participant_name] += pts;
-        guessingDetails[t.participant_name].push({
-          wine_number: t.wine_number,
-          actual_country: wine.country,
-          actual_grape: wine.grape,
-          actual_price: wine.price,
-          guess_country: t.guess_country,
-          guess_grape: t.guess_grape,
-          guess_price: t.guess_price,
-          country_correct: countryCorrect,
-          grape_correct: grapeCorrect,
-          price_correct: priceCorrect,
-          points: pts,
-          actual_range: actualRange
-        });
+        if (guessedRange && guessedRange === actualRange) pts += 2;
+        scores.set(t.participant_name, (scores.get(t.participant_name) || 0) + pts);
       });
-
-      const ranked = Object.entries(guessingScores)
-        .sort((a,b) => b[1]-a[1])
-        .map(([name,score]) => ({ name, score, details: guessingDetails[name] || [] }));
+      const rankedGuess = Array.from(scores.entries()).map(([name, score]) => ({name, score})).sort((a,b)=> b.score - a.score);
 
       html += '<div class="mb-8"><h3 class="font-display text-xl font-bold accent-deep mb-4">🎯 Gissningsresultat</h3>';
-      if (ranked.length) {
-        html += '<div class="podium">';
-        const top = ranked.slice(0,3);
-        [1,0,2].forEach(idx => {
-          if (idx < top.length) {
-            const r = top[idx];
-            html += `
-              <div class="podium-position podium-${idx+1}">
-                <div class="podium-medal">${medals[idx]}</div>
-                <p class="font-bold accent-deep">${escapeHtml(r.name)}</p>
-                <p class="text-2xl font-display font-bold accent-deep">${r.score}p</p>
-              </div>
-            `;
-          }
-        });
-        html += '</div>';
-
-        html += '<div class="space-y-2 mt-4">';
-        ranked.forEach(r => {
-          html += `
-            <div class="bg-white p-3 rounded-lg cursor-pointer expandable-row" onclick="toggleGuessingDetails(this)">
-              <div class="flex justify-between items-center">
-                <span class="font-semibold accent-deep">${escapeHtml(r.name)}</span>
-                <span class="font-bold">${r.score}p</span>
-              </div>
-              <div data-details="guess" class="hidden mt-3 text-xs space-y-2 px-3 py-2 bg-gray-100 rounded-lg max-h-64 overflow-y-auto">
-                ${r.details.map(d => `
-                  <div class="bg-white p-2 rounded border-l-2 ${d.country_correct || d.grape_correct || d.price_correct ? 'border-green-500' : 'border-red-500'}">
-                    <p class="font-semibold accent-deep mb-1">Vin ${d.wine_number} (${d.points}p)</p>
-                    <p class="text-gray-700"><span class="font-semibold">Land:</span> ${escapeHtml(d.guess_country)} ${d.country_correct ? '✓' : '✗'} (rätt: ${escapeHtml(d.actual_country)})</p>
-                    <p class="text-gray-700"><span class="font-semibold">Druva:</span> ${escapeHtml(d.guess_grape)} ${d.grape_correct ? '✓' : '✗'} (rätt: ${escapeHtml(d.actual_grape)})</p>
-                    <p class="text-gray-700"><span class="font-semibold">Pris:</span> ${escapeHtml(d.guess_price)} kr ${d.price_correct ? '✓' : '✗'} (rätt: ${escapeHtml(d.actual_price)} kr, intervall: ${escapeHtml(d.actual_range)})</p>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `;
-        });
-        html += '</div>';
-      }
-      html += '</div><hr class="my-8">';
-
-      // Analysis
-      const analysis = analyzeWineTastes();
-      html += '<div><h3 class="font-display text-xl font-bold accent-deep mb-4">📊 Vinanalys</h3><div class="space-y-2">';
-      if (analysis.sweetest) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">🍬 Sötaste:</span> Vin ${analysis.sweetest}</div>`;
-      if (analysis.driest) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">🍃 Torraste:</span> Vin ${analysis.driest}</div>`;
-      if (analysis.fullest) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">💪 Fylligaste:</span> Vin ${analysis.fullest}</div>`;
-      if (analysis.lightest) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">☁️ Lättaste:</span> Vin ${analysis.lightest}</div>`;
-      if (analysis.mostAroma) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">👃 Mest aroma:</span> Vin ${analysis.mostAroma}</div>`;
-      if (analysis.leastAroma) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">😶 Minst aroma:</span> Vin ${analysis.leastAroma}</div>`;
-      if (analysis.mostAcidity) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">🍋 Högst syra:</span> Vin ${analysis.mostAcidity}</div>`;
-      if (analysis.leastAcidity) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">🥛 Lägst syra:</span> Vin ${analysis.leastAcidity}</div>`;
-      html += '</div></div>';
+      if (!rankedGuess.length) html += '<p class="text-gray-600">Inga gissningar ännu</p>';
+      else html += renderRankedList(rankedGuess, r => r.name, r => `${r.score}p`);
+      html += "</div>";
 
       container.innerHTML = html;
     }
 
-    window.toggleWineReveal = (evt) => {
-      const reveal = document.getElementById('wine-reveal');
-      const btn = document.getElementById('btn-reveal');
-      wineRevealVisible = !wineRevealVisible;
-
-      if (wineRevealVisible) {
-        reveal.classList.remove('hidden');
-        btn.textContent = '🎭 Dölj Vinen';
-        renderWineReveal();
-      } else {
-        reveal.classList.add('hidden');
-        btn.textContent = '🎭 Avslöja Vinen';
-      }
-    };
-
     function renderWineReveal() {
-      const container = document.getElementById('wine-reveal');
-      const wineList = [...wines].sort((a,b) => (a.wine_number||0) - (b.wine_number||0));
-
+      const container = document.getElementById("wine-reveal");
+      const wineList = wines.slice().sort((a,b)=> (a.wine_number||0) - (b.wine_number||0));
       container.innerHTML = wineList.map(w => `
         <div class="bg-white p-4 rounded-lg border-l-4 border-purple-600">
           <p class="font-bold accent-deep text-lg">Vin ${w.wine_number}: ${escapeHtml(w.wine_name)}</p>
@@ -949,89 +761,205 @@
             <p><span class="font-semibold">Pris:</span> ${escapeHtml(w.price)} kr</p>
           </div>
         </div>
-      `).join('');
+      `).join("");
     }
 
-    // ===== Results: quiz =====
-    window.toggleQuizDetails = (root) => {
-      const details = root.querySelector("[data-details='quiz']");
-      details.classList.toggle("hidden");
+    window.toggleWineReveal = function(evt) {
+      const reveal = document.getElementById("wine-reveal");
+      const btn = evt.target;
+      if (reveal.classList.contains("hidden")) {
+        reveal.classList.remove("hidden");
+        btn.textContent = "🎭 Dölj Vinen";
+        renderWineReveal();
+      } else {
+        reveal.classList.add("hidden");
+        btn.textContent = "🎭 Avslöja Vinen";
+      }
     };
 
     function renderQuizResultsPage() {
-      const container = document.getElementById('quiz-results-content');
-      const medals = ['🥇', '🥈', '🥉'];
+      const container = document.getElementById("quiz-results-content");
+      const QUESTIONS = getQuestionsForRun();
 
-      const quizList = [...quizResults].sort((a,b) => (b.quiz_score||0) - (a.quiz_score||0));
-      if (quizList.length === 0) {
-        container.innerHTML = '<p class="text-gray-600">Inga quizresultat ännu</p>';
-        return;
-      }
+      const quizList = quizResults.slice().sort((a,b)=> (b.quiz_score||0) - (a.quiz_score||0));
+      if (!quizList.length) { container.innerHTML = '<p class="text-gray-600">Inga quizresultat ännu</p>'; return; }
 
-      let html = '';
-      html += '<div class="podium">';
-      const top3 = quizList.slice(0,3);
-
-      [1,0,2].forEach(idx => {
-        if (idx < top3.length) {
-          const r = top3[idx];
-          html += `
-            <div class="podium-position podium-${idx+1}">
-              <div class="podium-medal">${medals[idx]}</div>
-              <p class="font-bold accent-deep">${escapeHtml(r.participant_name)}</p>
-              <p class="text-2xl font-display font-bold accent-deep">${r.quiz_score}/15</p>
-            </div>
-          `;
-        }
+      const best = new Map();
+      quizList.forEach(q => {
+        const prev = best.get(q.participant_name);
+        if (!prev || (q.quiz_score||0) > (prev.quiz_score||0)) best.set(q.participant_name, q);
       });
-      html += '</div>';
+      const ranked = Array.from(best.values()).sort((a,b)=> (b.quiz_score||0) - (a.quiz_score||0));
 
-      html += '<div class="space-y-2 mt-4">';
-      quizList.forEach(r => {
-        const answers = JSON.parse(r.quiz_answers || '{}');
+      let html = '<div class="mb-6">';
+      html += renderRankedList(ranked, r => r.participant_name, r => `${r.quiz_score}/${QUESTIONS.length}`);
+      html += "</div>";
+
+      html += '<div class="space-y-2">';
+      ranked.forEach((result) => {
+        const answers = JSON.parse(result.quiz_answers || "{}");
         html += `
-          <div class="bg-white p-3 rounded-lg cursor-pointer expandable-row" onclick="toggleQuizDetails(this)">
+          <div class="bg-white p-3 rounded-lg cursor-pointer" onclick="toggleDetails(this)">
             <div class="flex justify-between items-center">
-              <span class="font-semibold accent-deep">${escapeHtml(r.participant_name)}</span>
-              <span class="font-bold">${r.quiz_score}/15</span>
+              <span class="font-semibold accent-deep">${escapeHtml(result.participant_name)}</span>
+              <span class="font-bold">${result.quiz_score}/${QUESTIONS.length}</span>
             </div>
-            <div data-details="quiz" class="hidden mt-3 px-3 py-2 bg-gray-100 rounded-lg max-h-96 overflow-y-auto space-y-2">
-              ${QUIZ_QUESTIONS.map(q => {
+            <div class="hidden mt-3 px-3 py-2 bg-gray-100 rounded-lg max-h-96 overflow-y-auto space-y-2">
+              ${QUESTIONS.map(q => {
                 const userAnswer = answers[q.id];
                 const correct = userAnswer === q.correct;
                 const correctAnswer = q.opts.find(opt => opt[0] === q.correct);
-                const userAnswerText = userAnswer ? (q.opts.find(opt => opt[0] === userAnswer)?.[1] || 'Inget svar') : 'Inget svar';
+                const userAnswerText = userAnswer ? (q.opts.find(opt => opt[0] === userAnswer)?.[1] || "") : "Inget svar";
                 return `
-                  <div class="bg-white p-2 rounded border-l-2 text-xs ${correct ? 'border-green-500' : 'border-red-500'}">
+                  <div class="bg-white p-2 rounded border-l-2 text-xs ${correct ? "border-green-500" : "border-red-500"}">
                     <p class="font-semibold accent-deep text-gray-800 mb-1">${escapeHtml(q.q)}</p>
-                    <p class="text-gray-700"><span class="font-semibold">Ditt svar:</span> ${escapeHtml(userAnswerText)} ${correct ? '✓' : '✗'}</p>
-                    ${!correct ? `<p class="text-gray-700"><span class="font-semibold">Rätt svar:</span> ${escapeHtml(correctAnswer?.[1] || '')}</p>` : ''}
+                    <p class="text-gray-700"><span class="font-semibold">Ditt svar:</span> ${escapeHtml(userAnswerText)} ${correct ? "✓" : "✗"}</p>
+                    ${!correct ? `<p class="text-gray-700"><span class="font-semibold">Rätt svar:</span> ${escapeHtml(correctAnswer?.[1] || "")}</p>` : ""}
                   </div>
                 `;
-              }).join('')}
+              }).join("")}
             </div>
           </div>
         `;
       });
-      html += '</div>';
+      html += "</div>";
 
       container.innerHTML = html;
     }
 
-    // Init
-    showSettings();
-  </script>
+    window.toggleDetails = function(element) {
+      const details = element.querySelector(".hidden");
+      if (details) details.classList.toggle("hidden");
+    };
 
-  <!-- 🔒 EXEMPEL på Firestore-regler (lägg i Firebase Console om du vill):
-  rules_version = '2';
-  service cloud.firestore {
-    match /databases/{database}/documents {
-      match /{document=**} {
-        allow read: if true;
-        allow write: if request.auth != null;
-      }
+    function normalizeEditorQuestions() {
+      return quizQuestions.map((q, idx) => {
+        const id = q.id ?? (idx+1);
+        const opts = Array.isArray(q.opts) ? q.opts : [["1",""],["X",""],["2",""]];
+        const safeOpts = [["1",""],["X",""],["2",""]].map(([k,_],i)=> {
+          const found = opts.find(o=>o[0]===k) || opts[i] || [k,""];
+          return [k, String(found[1] ?? "")];
+        });
+        const correct = ["1","X","2"].includes(q.correct) ? q.correct : "1";
+        return { id, q: String(q.q ?? ""), opts: safeOpts, correct };
+      });
     }
-  }
-  -->
+
+    function renderQuizEditor() {
+      const root = document.getElementById("quiz-editor");
+      const qs = normalizeEditorQuestions();
+      root.innerHTML = qs.map((q, idx) => `
+        <div class="bg-white rounded-lg p-4 border border-gray-200">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-semibold text-gray-800">Fråga #${idx+1}</div>
+            <button class="text-red-600 font-semibold" onclick="removeQuestion(${idx})">Ta bort</button>
+          </div>
+          <textarea class="w-full border border-gray-300 rounded-lg mb-3" rows="2" placeholder="Skriv frågan..." oninput="updateQuestionText(${idx}, this.value)">${escapeHtml(q.q)}</textarea>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <input class="border border-gray-300 rounded-lg" placeholder="1: alternativ" value="${escapeHtml(q.opts[0][1])}" oninput="updateQuestionOpt(${idx}, '1', this.value)" />
+            <input class="border border-gray-300 rounded-lg" placeholder="X: alternativ" value="${escapeHtml(q.opts[1][1])}" oninput="updateQuestionOpt(${idx}, 'X', this.value)" />
+            <input class="border border-gray-300 rounded-lg" placeholder="2: alternativ" value="${escapeHtml(q.opts[2][1])}" oninput="updateQuestionOpt(${idx}, '2', this.value)" />
+          </div>
+          <div class="mt-3 flex items-center gap-3 text-sm">
+            <span class="font-semibold text-gray-700">Rätt svar:</span>
+            <label class="flex items-center gap-1"><input type="radio" name="correct-${idx}" ${q.correct==='1'?'checked':''} onchange="updateQuestionCorrect(${idx}, '1')" /> 1</label>
+            <label class="flex items-center gap-1"><input type="radio" name="correct-${idx}" ${q.correct==='X'?'checked':''} onchange="updateQuestionCorrect(${idx}, 'X')" /> X</label>
+            <label class="flex items-center gap-1"><input type="radio" name="correct-${idx}" ${q.correct==='2'?'checked':''} onchange="updateQuestionCorrect(${idx}, '2')" /> 2</label>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    window.addEmptyQuestion = function() {
+      const nextId = (quizQuestions.reduce((m,q)=>Math.max(m, Number(q.id||0)), 0) || 0) + 1;
+      quizQuestions.push({ id: nextId, q: "", opts: [["1",""],["X",""],["2",""]], correct: "1" });
+      renderQuizEditor();
+    };
+
+    window.removeQuestion = function(idx) {
+      quizQuestions.splice(idx, 1);
+      renderQuizEditor();
+    };
+
+    window.updateQuestionText = function(idx, value) { quizQuestions[idx].q = value; };
+    window.updateQuestionOpt = function(idx, key, value) {
+      const q = quizQuestions[idx];
+      const i = q.opts.findIndex(o => o[0] === key);
+      if (i >= 0) q.opts[i][1] = value;
+    };
+    window.updateQuestionCorrect = function(idx, key) { quizQuestions[idx].correct = key; };
+
+    window.loadDefaultQuestions = function() {
+      quizQuestions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+      renderQuizEditor();
+      showToast("Standardfrågor laddade (kom ihåg att trycka Spara quiz)");
+    };
+
+    window.saveQuizQuestions = async function() {
+      try {
+        await ensureSignedIn();
+        const cleaned = normalizeEditorQuestions().filter(q => q.q.trim().length > 0).map((q, i) => ({ ...q, id: i+1 }));
+        await setDoc(metaDoc, { quiz_questions: cleaned }, { merge: true });
+        showToast("Quiz sparat!");
+      } catch (e) {
+        console.error(e);
+        showToast("Kunde inte spara quiz (kolla Rules)", "error");
+      }
+    };
+
+    window.resetTastings = function() {
+      if (!confirm("Är du säker? Detta tar bort alla vinprovningar.")) return;
+      (async () => {
+        try { for (const t of tastings) await deleteItemById(t.id); showToast("Vinprovningar återställda!"); }
+        catch (e) { console.error(e); showToast("Kunde inte återställa (kolla Rules)", "error"); }
+      })();
+    };
+
+    window.resetQuiz = function() {
+      if (!confirm("Är du säker? Detta tar bort alla quizresultat.")) return;
+      (async () => {
+        try { for (const q of quizResults) await deleteItemById(q.id); showToast("Quizresultat återställda!"); }
+        catch (e) { console.error(e); showToast("Kunde inte återställa (kolla Rules)", "error"); }
+      })();
+    };
+
+    function wireListeners() {
+      const qItems = query(itemsCol, orderBy("createdAt", "asc"));
+      onSnapshot(qItems, (snap) => {
+        allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        participants = allItems.filter(x => x.type === "participant");
+        wines = allItems.filter(x => x.type === "wine");
+        tastings = allItems.filter(x => x.type === "tasting");
+        quizResults = allItems.filter(x => x.type === "quiz");
+
+        if (!document.getElementById("settings-section").classList.contains("hidden")) { renderParticipants(); renderWinesList(); }
+        if (!document.getElementById("tasting-section").classList.contains("hidden")) renderTastingSelects();
+        if (!document.getElementById("quiz-section").classList.contains("hidden")) renderQuizParticipants();
+        if (!document.getElementById("tasting-results-section").classList.contains("hidden")) renderTastingResultsPage();
+        if (!document.getElementById("quiz-results-section").classList.contains("hidden")) renderQuizResultsPage();
+      });
+
+      onSnapshot(metaDoc, (snap) => {
+        const cfg = snap.exists() ? snap.data() : {};
+        const title = cfg.event_title || defaultConfig.event_title;
+        document.getElementById("event-title").textContent = title;
+        if (document.activeElement !== document.getElementById("event-name-input")) {
+          document.getElementById("event-name-input").value = title;
+        }
+        quizQuestions = Array.isArray(cfg.quiz_questions) && cfg.quiz_questions.length ? cfg.quiz_questions : JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+        if (!document.getElementById("settings-section").classList.contains("hidden")) renderQuizEditor();
+      });
+    }
+
+    async function boot() {
+      try { await signInAnonymously(auth); } catch (e) { console.warn("Anon sign-in failed; will retry on first write", e); }
+      await loadEventConfig();
+      wireListeners();
+      window.showSettings();
+    }
+
+    onAuthStateChanged(auth, () => {});
+    boot();
+  </script>
 </body>
 </html>
