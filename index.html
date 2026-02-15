@@ -704,50 +704,152 @@
       return html;
     }
 
+    
     function renderTastingResultsPage() {
-      const container = document.getElementById("tasting-results-content");
-      if (!tastings.length) { container.innerHTML = '<p class="text-gray-600">Inga provningar ännu</p>'; return; }
+      const container = document.getElementById('tasting-results-content');
 
-      const byWine = new Map();
+      const parts = participants.slice().sort((a, b) => a.participant_name.localeCompare(b.participant_name));
+      const totalParticipants = parts.length;
+
+      if (tastings.length === 0) {
+        container.innerHTML = '<p class="text-gray-600">Inga provningar ännu</p>';
+        return;
+      }
+
+      // Avg rating per wine
+      const winesByRating = {};
       tastings.forEach(t => {
-        const key = t.wine_number;
-        const prev = byWine.get(key) || { total: 0, count: 0 };
-        prev.total += Number(t.rating || 0);
-        prev.count += 1;
-        byWine.set(key, prev);
+        if (!winesByRating[t.wine_number]) winesByRating[t.wine_number] = { total: 0, count: 0 };
+        winesByRating[t.wine_number].total += Number(t.rating || 0);
+        winesByRating[t.wine_number].count += 1;
       });
 
-      const ratedWines = Array.from(byWine.entries()).map(([wineNum, d]) => {
-        const wine = wines.find(w => w.wine_number == wineNum);
-        return { wine_number: wineNum, wine_name: wine?.wine_name || "", avg_rating: d.count ? (d.total / d.count) : 0 };
-      }).sort((a,b) => b.avg_rating - a.avg_rating);
+      const ratedWines = Object.entries(winesByRating)
+        .map(([wineNum, data]) => {
+          const wine = wines.find(w => String(w.wine_number) === String(wineNum));
+          const avg = data.count ? (data.total / data.count) : 0;
 
-      let html = "";
-      html += '<div class="mb-8"><h3 class="font-display text-xl font-bold accent-deep mb-4">⭐ Bästa Vin (Betyg)</h3>';
-      html += renderRankedList(ratedWines, (w) => `Vin ${w.wine_number}${w.wine_name ? ": " + w.wine_name : ""}`, (w) => `⭐${w.avg_rating.toFixed(1)}`);
-      html += "</div><hr class='my-8'>";
+          // Participation per wine (unique participants who submitted)
+          const respondedSet = new Set(
+            tastings
+              .filter(t => String(t.wine_number) === String(wineNum))
+              .map(t => String(t.participant_name || '').trim())
+              .filter(Boolean)
+          );
 
-      const scores = new Map();
-      tastings.forEach(t => {
-        const wine = wines.find(w => w.wine_number === t.wine_number);
-        if (!wine) return;
-        let pts = 0;
-        if ((t.guess_country||"").toLowerCase() === (wine.country||"").toLowerCase()) pts += 2;
-        if ((t.guess_grape||"").toLowerCase() === (wine.grape||"").toLowerCase()) pts += 5;
-        const guessedRange = getPriceRange(t.guess_price);
-        const actualRange = getPriceRange(wine.price);
-        if (guessedRange && guessedRange === actualRange) pts += 2;
-        scores.set(t.participant_name, (scores.get(t.participant_name) || 0) + pts);
+          const responded = Array.from(respondedSet).sort((a, b) => a.localeCompare(b));
+          const missing = parts
+            .map(p => p.participant_name)
+            .filter(n => !respondedSet.has(String(n).trim()));
+
+          return {
+            wine_number: wineNum,
+            avg_rating: avg,
+            tasted_count: responded.length,
+            total_participants: totalParticipants,
+            responded,
+            missing,
+            // hidden details
+            wine_name: wine?.wine_name || '',
+            grape: wine?.grape || '',
+            country: wine?.country || '',
+            price: wine?.price ?? ''
+          };
+        })
+        .sort((a, b) => b.avg_rating - a.avg_rating);
+
+      const medals = ['🥇', '🥈', '🥉'];
+
+      let html = '';
+      html += '<div class="mb-6">';
+      html += '<h3 class="font-display text-xl font-bold accent-deep mb-4">⭐ Vinranking efter betyg</h3>';
+
+      ratedWines.forEach((w, i) => {
+        const rank = i + 1;
+        const medal = rank <= 3 ? medals[rank - 1] : '';
+        const respondedText = `${w.tasted_count} av ${w.total_participants} har svarat`;
+
+        html += `
+          <div class="bg-white rounded-lg p-4 mb-3 border border-gray-200">
+            <div class="flex justify-between items-start gap-4">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">${medal || `<span class="inline-block w-7 text-center font-bold text-gray-500">${rank}</span>`}</span>
+                  <p class="font-bold accent-deep text-lg">Vin ${escapeHtml(String(w.wine_number))}</p>
+                </div>
+                <button type="button"
+                        class="mt-1 text-sm text-gray-700 underline decoration-dotted"
+                        onclick="toggleWineParticipants('${escapeHtml(String(w.wine_number))}')">
+                  ${escapeHtml(respondedText)}
+                </button>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-2xl">⭐</span>
+                <span class="font-display font-bold accent-deep text-2xl">${Number(w.avg_rating).toFixed(1)}</span>
+              </div>
+            </div>
+
+            <div id="wine-participants-${escapeHtml(String(w.wine_number))}" class="hidden mt-3 bg-gray-50 rounded-lg p-3 text-sm">
+              <p class="font-semibold accent-deep mb-2">Svar från:</p>
+              <div class="space-y-1">
+                ${parts.map(p => {
+                  const name = p.participant_name;
+                  const ok = w.responded.includes(name);
+                  return `<div class="${ok ? 'text-green-700' : 'text-gray-500'}">${ok ? '✓' : '•'} ${escapeHtml(name)}</div>`;
+                }).join('')}
+              </div>
+            </div>
+
+            <button type="button"
+                    class="w-full mt-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold py-2"
+                    onclick="toggleWineDetails('${escapeHtml(String(w.wine_number))}')">
+              🎭 ${w._revealed ? 'Dölj vinet' : 'Avslöja vinet'}
+            </button>
+
+            <div id="wine-details-${escapeHtml(String(w.wine_number))}" class="hidden mt-3 border-l-4 border-purple-600 bg-white rounded-lg p-3 text-sm">
+              <p class="font-bold accent-deep">${escapeHtml(w.wine_name || '')}</p>
+              <div class="mt-2 space-y-1 text-gray-700">
+                ${w.grape ? `<p><span class="font-semibold">Druva:</span> ${escapeHtml(String(w.grape))}</p>` : ''}
+                ${w.country ? `<p><span class="font-semibold">Land:</span> ${escapeHtml(String(w.country))}</p>` : ''}
+                ${w.price !== '' && w.price !== null && w.price !== undefined ? `<p><span class="font-semibold">Pris:</span> ${escapeHtml(String(w.price))} kr</p>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
       });
-      const rankedGuess = Array.from(scores.entries()).map(([name, score]) => ({name, score})).sort((a,b)=> b.score - a.score);
 
-      html += '<div class="mb-8"><h3 class="font-display text-xl font-bold accent-deep mb-4">🎯 Gissningsresultat</h3>';
-      if (!rankedGuess.length) html += '<p class="text-gray-600">Inga gissningar ännu</p>';
-      else html += renderRankedList(rankedGuess, r => r.name, r => `${r.score}p`);
-      html += "</div>";
+      html += '</div>';
+
+      // Keep the existing analysis block (if you want it)
+      const analysis = analyzeWineTastes();
+      html += '<hr class="my-8">';
+      html += '<div><h3 class="font-display text-xl font-bold accent-deep mb-4">📊 Vinanalys</h3>';
+      html += '<div class="space-y-2">';
+      if (analysis.sweetest) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">🍬 Sötaste:</span> Vin ${escapeHtml(String(analysis.sweetest))}</div>`;
+      if (analysis.driest) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">🍃 Torraste:</span> Vin ${escapeHtml(String(analysis.driest))}</div>`;
+      if (analysis.fullest) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">💪 Fylligaste:</span> Vin ${escapeHtml(String(analysis.fullest))}</div>`;
+      if (analysis.lightest) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">☁️ Lättaste:</span> Vin ${escapeHtml(String(analysis.lightest))}</div>`;
+      if (analysis.mostAroma) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">👃 Mest aroma:</span> Vin ${escapeHtml(String(analysis.mostAroma))}</div>`;
+      if (analysis.leastAroma) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">😶 Minst aroma:</span> Vin ${escapeHtml(String(analysis.leastAroma))}</div>`;
+      if (analysis.mostAcidity) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">🍋 Högst syra:</span> Vin ${escapeHtml(String(analysis.mostAcidity))}</div>`;
+      if (analysis.leastAcidity) html += `<div class="bg-white p-3 rounded-lg"><span class="font-semibold accent-deep">🥛 Lägst syra:</span> Vin ${escapeHtml(String(analysis.leastAcidity))}</div>`;
+      html += '</div></div>';
 
       container.innerHTML = html;
     }
+
+    function toggleWineDetails(wineNumber) {
+      const el = document.getElementById(`wine-details-${wineNumber}`);
+      if (!el) return;
+      el.classList.toggle('hidden');
+    }
+
+    function toggleWineParticipants(wineNumber) {
+      const el = document.getElementById(`wine-participants-${wineNumber}`);
+      if (!el) return;
+      el.classList.toggle('hidden');
+    }
+
 
     function renderWineReveal() {
       const container = document.getElementById("wine-reveal");
