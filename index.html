@@ -1441,6 +1441,10 @@ window.saveQuizQuestions = async function() {
       window.showSettings();
     }
 
+    // Expose functions used by inline onclick handlers (module scope -> window)
+    window.toggleWineParticipants = toggleWineParticipants;
+    window.toggleWineDetails = toggleWineDetails;
+
 
     onAuthStateChanged(auth, () => {});
     boot();
