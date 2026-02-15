@@ -259,8 +259,19 @@
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     function getEventId() {
-      const p = new URLSearchParams(location.search);
-      const raw = (p.get("event") || "default").trim().toLowerCase();
+      // Supports:
+      //  - ?event=slalomgrand
+      //  - ?event.slalomgrand   (legacy)
+      const qs = location.search || "";
+      const p = new URLSearchParams(qs);
+      let raw = (p.get("event") || "").trim();
+      if (!raw) {
+        // legacy: ?event.NAME  (no =)
+        const legacy = qs.startsWith("?event.") ? qs.slice("?event.".length) : "";
+        raw = legacy.split("&")[0].trim();
+      }
+      raw = (raw || "default").toLowerCase();
+      // keep a-z 0-9 _ -
       return raw.replace(/[^a-z0-9_-]/g, "");
     }
     const EVENT_ID = getEventId();
@@ -988,7 +999,46 @@
     }
 
     
-    function renderTastingResultsPage() {
+    
+    function analyzeWineTastes() {
+      // Aggregate subjective attributes per wine and pick "most common" winners
+      const analysis = { sweetest:null, driest:null, fullest:null, lightest:null, mostAroma:null, leastAroma:null, mostAcidity:null, leastAcidity:null };
+      const perWine = {};
+      (wines||[]).filter(w=>w.type==='wine').forEach(w=>{
+        perWine[w.wine_number] = { sweetness:[], body:[], aroma:[], acidity:[] };
+      });
+      (tastings||[]).forEach(t=>{
+        const bucket = perWine[t.wine_number];
+        if(!bucket) return;
+        if(t.sweetness) bucket.sweetness.push(t.sweetness);
+        if(t.body) bucket.body.push(t.body);
+        if(t.aroma) bucket.aroma.push(t.aroma);
+        if(t.acidity) bucket.acidity.push(t.acidity);
+      });
+      const count = (arr,val)=>arr.filter(x=>x===val).length;
+      let best = (metric,val,cmp='max')=>{
+        let bestWine=null, bestCount=-1;
+        Object.entries(perWine).forEach(([wineNum,data])=>{
+          const c=count(data[metric], val);
+          if(cmp==='max' ? c>bestCount : c<bestCount){
+            bestCount=c; bestWine=wineNum;
+          }
+        });
+        return bestWine;
+      };
+      // For "min" style we still want the wine with most votes for that opposite label
+      analysis.sweetest = (()=>{let w=null,bc=-1;Object.entries(perWine).forEach(([n,d])=>{const c=count(d.sweetness,'Söt'); if(c>bc){bc=c;w=n}});return w;})();
+      analysis.driest   = (()=>{let w=null,bc=-1;Object.entries(perWine).forEach(([n,d])=>{const c=count(d.sweetness,'Torr'); if(c>bc){bc=c;w=n}});return w;})();
+      analysis.fullest  = (()=>{let w=null,bc=-1;Object.entries(perWine).forEach(([n,d])=>{const c=count(d.body,'Fyllig'); if(c>bc){bc=c;w=n}});return w;})();
+      analysis.lightest = (()=>{let w=null,bc=-1;Object.entries(perWine).forEach(([n,d])=>{const c=count(d.body,'Lätt'); if(c>bc){bc=c;w=n}});return w;})();
+      analysis.mostAroma= (()=>{let w=null,bc=-1;Object.entries(perWine).forEach(([n,d])=>{const c=count(d.aroma,'Hög'); if(c>bc){bc=c;w=n}});return w;})();
+      analysis.leastAroma=(()=>{let w=null,bc=-1;Object.entries(perWine).forEach(([n,d])=>{const c=count(d.aroma,'Låg'); if(c>bc){bc=c;w=n}});return w;})();
+      analysis.mostAcidity=(()=>{let w=null,bc=-1;Object.entries(perWine).forEach(([n,d])=>{const c=count(d.acidity,'Hög'); if(c>bc){bc=c;w=n}});return w;})();
+      analysis.leastAcidity=(()=>{let w=null,bc=-1;Object.entries(perWine).forEach(([n,d])=>{const c=count(d.acidity,'Låg'); if(c>bc){bc=c;w=n}});return w;})();
+      return analysis;
+    }
+
+function renderTastingResultsPage() {
       const container = document.getElementById('tasting-results-content');
 
       const parts = participants.slice().sort((a, b) => a.participant_name.localeCompare(b.participant_name));
@@ -1364,15 +1414,33 @@ window.saveQuizQuestions = async function() {
         }
         quizQuestions = Array.isArray(cfg.quiz_questions) && cfg.quiz_questions.length ? cfg.quiz_questions : JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
         if (!document.getElementById("settings-section").classList.contains("hidden")) renderQuizEditor();
-      });
+      }, (err) => { console.error(err); showToast('Kolla rules (saknar behörighet att läsa event-config).', 'error'); });
     }
 
     async function boot() {
-      try { await signInAnonymously(auth); } catch (e) { console.warn("Anon sign-in failed; will retry on first write", e); }
+      // 1) Ensure we have an authenticated user (anonymous is fine)
+      await new Promise((resolve) => {
+        const unsub = onAuthStateChanged(auth, async (user) => {
+          if (user) { unsub(); return resolve(); }
+          try {
+            await signInAnonymously(auth);
+          } catch (e) {
+            console.error("Anonymous sign-in failed", e);
+            showToast("Kan inte logga in (anon). Kolla Authorized domains + att Anonymous är på i Firebase Auth.", "error");
+          }
+        });
+      });
+
+      // 2) Load event config (title, password flag, quiz questions)
       await loadEventConfig();
+
+      // 3) Start realtime listeners AFTER auth is ready (avoids permission-denied race)
       wireListeners();
+
+      // 4) Default view
       window.showSettings();
     }
+
 
     onAuthStateChanged(auth, () => {});
     boot();
