@@ -97,15 +97,18 @@
           <div class="mb-8">
             <div class="flex items-center justify-between gap-3 mb-2">
               <h3 class="font-display text-lg font-bold accent-deep">Quizfrågor</h3>
-              <button class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onclick="loadDefaultQuestions()">Återställ standard</button>
+              <button class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onclick="toggleQuizEditor()">✏️ Redigera frågor</button>
             </div>
+            <div id="quiz-editor-panel" class="hidden mt-3">
             <p class="text-xs text-gray-600 mb-4">Du kan skapa egna frågor här. De sparas per event och synkas live.</p>
             <div id="quiz-editor" class="space-y-3"></div>
             <div class="flex gap-2 mt-4">
               <button class="flex-1 btn-primary rounded-lg font-semibold" onclick="addEmptyQuestion()">+ Ny fråga</button>
               <button class="flex-1 bg-white border border-gray-300 rounded-lg font-semibold" onclick="saveQuizQuestions()">Spara quiz</button>
             </div>
-          </div>
+          
+            </div>
+</div>
 
           <hr class="my-8">
 
@@ -287,12 +290,292 @@
     let quizAnswers = {};
 
     const DEFAULT_QUESTIONS = [
-      { id: 1, q: "1) Vilket land producerar mest vin i världen?", opts: [["1","Spanien"],["X","Italien"],["2","Frankrike"]], correct: "X" },
-      { id: 2, q: "2) Vilken druva är huvuddruvan i rött vin från Barolo?", opts: [["1","Barbera"],["X","Sangiovese"],["2","Nebbiolo"]], correct: "2" },
-      { id: 3, q: '3) Vad betyder "Sec" på en fransk vinetikett?', opts: [["1","Torrt"],["X","Halvtorrt/halvsött"],["2","Mycket sött"]], correct: "X" },
-      { id: 4, q: "4) Vilket vinområde är mest känt för druvan Riesling?", opts: [["1","Rioja"],["X","Bordeaux"],["2","Mosel"]], correct: "2" },
-      { id: 5, q: "5) Vad händer under malolaktisk jäsning?", opts: [["1","Sockret omvandlas till alkohol"],["X","Äppelsyra omvandlas till mjölksyra"],["2","Alkohol omvandlas till vinäger"]], correct: "X" },
-    ];
+  {
+    id: 1,
+    q: "1) Vilket land producerar mest vin i världen?",
+    opts: [
+      [
+        "1",
+        "Spanien"
+      ],
+      [
+        "X",
+        "Italien"
+      ],
+      [
+        "2",
+        "Frankrike"
+      ]
+    ],
+    correct: "X"
+  },
+  {
+    id: 2,
+    q: "2) Vilken druva är huvuddruvan i rött vin från Barolo?",
+    opts: [
+      [
+        "1",
+        "Barbera"
+      ],
+      [
+        "X",
+        "Sangiovese"
+      ],
+      [
+        "2",
+        "Nebbiolo"
+      ]
+    ],
+    correct: "2"
+  },
+  {
+    id: 3,
+    q: "3) Vad betyder \"Sec\" på en fransk vinetikett?",
+    opts: [
+      [
+        "1",
+        "Torrt"
+      ],
+      [
+        "X",
+        "Halvtorrt/halvsött"
+      ],
+      [
+        "2",
+        "Mycket sött"
+      ]
+    ],
+    correct: "X"
+  },
+  {
+    id: 4,
+    q: "4) Vilket vinområde är mest känt för druvan Riesling?",
+    opts: [
+      [
+        "1",
+        "Rioja"
+      ],
+      [
+        "X",
+        "Bordeaux"
+      ],
+      [
+        "2",
+        "Mosel"
+      ]
+    ],
+    correct: "2"
+  },
+  {
+    id: 5,
+    q: "5) Vad händer under malolaktisk jäsning?",
+    opts: [
+      [
+        "1",
+        "Sockret omvandlas till alkohol"
+      ],
+      [
+        "X",
+        "Äppelsyra omvandlas till mjölksyra"
+      ],
+      [
+        "2",
+        "Alkohol omvandlas till vinäger"
+      ]
+    ],
+    correct: "X"
+  },
+  {
+    id: 6,
+    q: "6) Vilket land kommer druvan Malbec ursprungligen från?",
+    opts: [
+      [
+        "1",
+        "Argentina"
+      ],
+      [
+        "X",
+        "Chile"
+      ],
+      [
+        "2",
+        "Frankrike"
+      ]
+    ],
+    correct: "2"
+  },
+  {
+    id: 7,
+    q: "7) Vad innebär \"fatlagrat vin\" oftast för smaken?",
+    opts: [
+      [
+        "1",
+        "Mer tannin, krydda och vaniljtoner"
+      ],
+      [
+        "X",
+        "Lägre alkoholhalt"
+      ],
+      [
+        "2",
+        "Mindre syra"
+      ]
+    ],
+    correct: "1"
+  },
+  {
+    id: 8,
+    q: "8) Cava produceras främst i…",
+    opts: [
+      [
+        "1",
+        "Italien"
+      ],
+      [
+        "X",
+        "Spanien"
+      ],
+      [
+        "2",
+        "Portugal"
+      ]
+    ],
+    correct: "X"
+  },
+  {
+    id: 9,
+    q: "9) Vad är Prosecco gjort främst på för druva?",
+    opts: [
+      [
+        "1",
+        "Glera"
+      ],
+      [
+        "X",
+        "Trebbiano"
+      ],
+      [
+        "2",
+        "Pinot Grigio"
+      ]
+    ],
+    correct: "1"
+  },
+  {
+    id: 10,
+    q: "10) Vilket klimat ger oftast viner med högre syra och lägre alkohol?",
+    opts: [
+      [
+        "1",
+        "Varmt klimat"
+      ],
+      [
+        "X",
+        "Svalt klimat"
+      ],
+      [
+        "2",
+        "Tropiskt klimat"
+      ]
+    ],
+    correct: "X"
+  },
+  {
+    id: 11,
+    q: "11) Vad betyder \"Grand Cru\" i Bourgogne?",
+    opts: [
+      [
+        "1",
+        "En speciell druva"
+      ],
+      [
+        "X",
+        "En metod för lagring"
+      ],
+      [
+        "2",
+        "Den högsta vingårdsklassificeringen"
+      ]
+    ],
+    correct: "2"
+  },
+  {
+    id: 12,
+    q: "12) Vilken färg får vin av lång skalkontakt med blå druvor?",
+    opts: [
+      [
+        "1",
+        "Mörkare färg och mer tannin"
+      ],
+      [
+        "X",
+        "Ljusare färg"
+      ],
+      [
+        "2",
+        "Ingen skillnad alls"
+      ]
+    ],
+    correct: "1"
+  },
+  {
+    id: 13,
+    q: "13) Vad är typiskt för Sauvignon Blanc från Nya Zeeland?",
+    opts: [
+      [
+        "1",
+        "Smöriga, ekiga toner"
+      ],
+      [
+        "X",
+        "Hög syra och aromer av krusbär/citrus"
+      ],
+      [
+        "2",
+        "Mycket tannin"
+      ]
+    ],
+    correct: "X"
+  },
+  {
+    id: 14,
+    q: "14) Hur görs rosévin oftast?",
+    opts: [
+      [
+        "1",
+        "Man blandar rött och vitt vin"
+      ],
+      [
+        "X",
+        "Lång lagring på ekfat"
+      ],
+      [
+        "2",
+        "Kort skalkontakt med blå druvor"
+      ]
+    ],
+    correct: "2"
+  },
+  {
+    id: 15,
+    q: "15) Vad betyder \"Reserva\" i spanska Rioja (generellt)?",
+    opts: [
+      [
+        "1",
+        "Högre lagringskrav än Crianza"
+      ],
+      [
+        "X",
+        "Ekologiskt vin"
+      ],
+      [
+        "2",
+        "Låg alkoholhalt"
+      ]
+    ],
+    correct: "1"
+  }
+];
 
     function escapeHtml(str) {
       return String(str ?? "").replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s]));
@@ -663,7 +946,7 @@
         document.getElementById("quiz-participant").value = "";
       } catch (e) {
         console.error(e);
-        showToast("Kunde inte spara quiz (kolla Rules)", "error");
+        showToast("Kunde inte spara quiz (behörighet/rules).", "error");
       }
     };
 
@@ -997,15 +1280,29 @@
       showToast("Standardfrågor laddade (kom ihåg att trycka Spara quiz)");
     };
 
-    window.saveQuizQuestions = async function() {
+    
+    function toggleQuizEditor() {
+      const panel = document.getElementById('quiz-editor-panel');
+      if (!panel) return;
+      panel.classList.toggle('hidden');
+      // Scrolla så man ser editorn när man öppnar
+      if (!panel.classList.contains('hidden')) {
+        setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }
+    }
+
+window.saveQuizQuestions = async function() {
       try {
+        await ensureSignedIn();
         await ensureSignedIn();
         const cleaned = normalizeEditorQuestions().filter(q => q.q.trim().length > 0).map((q, i) => ({ ...q, id: i+1 }));
         await setDoc(metaDoc, { quiz_questions: cleaned }, { merge: true });
         showToast("Quiz sparat!");
+        const panel = document.getElementById("quiz-editor-panel");
+        if (panel) panel.classList.add("hidden");
       } catch (e) {
         console.error(e);
-        showToast("Kunde inte spara quiz (kolla Rules)", "error");
+        showToast("Kunde inte spara quiz (behörighet/rules).", "error");
       }
     };
 
@@ -1028,20 +1325,37 @@
     function wireListeners() {
       const qItems = query(itemsCol, orderBy("createdAt", "asc"));
       onSnapshot(qItems, (snap) => {
-        allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        participants = allItems.filter(x => x.type === "participant");
-        wines = allItems.filter(x => x.type === "wine");
-        tastings = allItems.filter(x => x.type === "tasting");
-        quizResults = allItems.filter(x => x.type === "quiz");
+        const docs = snap.docs.map(d => ({ __id: d.id, ...d.data() }));
+        allItems = docs;
 
-        if (!document.getElementById("settings-section").classList.contains("hidden")) { renderParticipants(); renderWinesList(); }
-        if (!document.getElementById("tasting-section").classList.contains("hidden")) renderTastingSelects();
-        if (!document.getElementById("quiz-section").classList.contains("hidden")) renderQuizParticipants();
-        if (!document.getElementById("tasting-results-section").classList.contains("hidden")) renderTastingResultsPage();
-        if (!document.getElementById("quiz-results-section").classList.contains("hidden")) renderQuizResultsPage();
-      });
+        participants = docs.filter(x => x.type === 'participant');
+        wines = docs.filter(x => x.type === 'wine').sort((a, b) => (a.wine_number || 0) - (b.wine_number || 0));
+        tastings = docs.filter(x => x.type === 'tasting');
+        quizResults = docs.filter(x => x.type === 'quiz');
+        quizQuestions = docs.filter(x => x.type === 'quiz_question');
 
-      onSnapshot(metaDoc, (snap) => {
+        // Håll UI i synk med realtidsdata oavsett vilken flik du är på
+        if (!document.getElementById('settings-section').classList.contains('hidden')) {
+          renderParticipants();
+          renderWinesList();
+        }
+        if (!document.getElementById('tasting-section').classList.contains('hidden')) {
+          renderTastingSelects();
+        }
+        if (!document.getElementById('quiz-section').classList.contains('hidden')) {
+          renderQuizParticipants();
+        }
+        if (!document.getElementById('tasting-results-section').classList.contains('hidden')) {
+          renderTastingResultsPage();
+        }
+        if (!document.getElementById('quiz-results-section').classList.contains('hidden')) {
+          renderQuizResultsPage();
+        }
+        const qe = document.getElementById('quiz-editor');
+        if (qe && !qe.classList.contains('hidden')) {
+          renderQuizEditor();
+        }
+      });onSnapshot(metaDoc, (snap) => {
         const cfg = snap.exists() ? snap.data() : {};
         const title = cfg.event_title || defaultConfig.event_title;
         document.getElementById("event-title").textContent = title;
